@@ -13,7 +13,7 @@
   
   <title>
     
-      Hello World 
+      “hello world！” —— 我的第一篇博客 
       
       
       |
@@ -153,45 +153,61 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">Hello World</div>
+      <div class="post-title">“hello world！” —— 我的第一篇博客</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2025-10-13 19:32:17
+          2025-10-14 22:37:48
         </span>
         
       </div>
       <div class="markdown-body">
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+        <pre><code>当这个个人博客真的被建立之后这个“hello world”就似乎是真正的我，向网络世界，小心翼翼的打得一声招呼了。还挺有意思的。
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+##搭建的过程
+参考 [Hexo零基础搭建个人博客(详解)](https://blog.csdn.net/qq_53517370/article/details/128908434?spm=1001.2014.3001.5501)
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+##出现了点问题
+其中将生成SSH添加到Github中出现了点问题:由于我的用户目录是中文，而SHH在保存密钥时无法正确处理中文路径，而且路径编码也出现混乱的问题。
+直接问了AI。
+它给我的解决方案是：设置环境变量并验证
+    *设置正确的主目录
+    export HOME=&quot;/c/Users/name&quot;
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+     验证路径
+    echo $HOME
+    cd ~
+    pwd
+    cat ~/.ssh/config
+    ssh -T git@github.com
+    *
+这个没有奏效
+于是改成了**指定所有参数（绕过配置文件）**  
+    *ssh -T -p 443 -o IdentityFile=&quot;/c/Users/name/.ssh/id_rsa&quot; git@ssh.github.com*
+</code></pre>
+<p>date: 2025-10-13 21:12:01<br>tags:</p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
+              <a href="/2025/10/13/hello-world/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
           </div>
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2025-10-13 19:32:17
+              2025-10-14 22:37:48
             </span>
             
           </div>
           <div class="post-foot-prev">
             
-              <a href="/2025/10/13/firstblog/" target="_self">
+              <a href="/2025/10/13/newpapername-1/" target="_self">
                 <span>下一页</span>
                 <i class="iconfont icon-chevronright"></i>
               </a>
@@ -201,23 +217,6 @@
       
     </div>
     
-  <div id="btn-catalog" class="btn-catalog">
-    <i class="iconfont icon-catalog"></i>
-  </div>
-  <div class="post-catalog hidden" id="catalog">
-    <div class="title">目录</div>
-    <div class="catalog-content">
-      
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick-Start"><span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-a-new-post"><span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run-server"><span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate-static-files"><span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy-to-remote-sites"><span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
-      
-    </div>
-  </div>
-
-  
-<script src="/js/catalog.js"></script>
-
-
-
 
     
       <div class="comments-container">
@@ -496,12 +495,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Hello%20World + '&url=' + http%3A%2F%2Fexample.com%2F2025%2F10%2F13%2Fhello-world%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E2%80%9Chello%20world%EF%BC%81%E2%80%9D%20%E2%80%94%E2%80%94%20%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2 + '&url=' + http%3A%2F%2Fexample.com%2F2025%2F10%2F13%2Ffirstblog%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2025/10/13/hello-world/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2025/10/13/firstblog/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
