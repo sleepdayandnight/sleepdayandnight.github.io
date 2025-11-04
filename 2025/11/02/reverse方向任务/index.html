@@ -109,6 +109,14 @@
     <div class="post-info">
         <div class="tag-list">
             
+                
+                    <span class="post-tag">
+                        <a href="/tags/reverse/">
+                            reverse
+                        </a>
+                    </span>    
+                           
+            
         </div>
         <div class="post-title">
             
@@ -128,7 +136,116 @@
     </div>
 </div>
     <div class="post-content">
-    
+    <h6 id="任务1——基础"><a href="#任务1——基础" class="headerlink" title="任务1——基础"></a>任务1——基础</h6><h6 id="任务2——工具"><a href="#任务2——工具" class="headerlink" title="任务2——工具"></a>任务2——工具</h6><h6 id="任务3——密码"><a href="#任务3——密码" class="headerlink" title="任务3——密码"></a>任务3——密码</h6><h6 id="任务4——题目"><a href="#任务4——题目" class="headerlink" title="任务4——题目"></a>任务4——题目</h6><hr>
+<p>看起来会是入门时间比较长的一条路，但c语言和汇编语言大一已经学过了，所以是否会相对好一点。<br>#基础</p>
+<h1 id="任务1——基础-1"><a href="#任务1——基础-1" class="headerlink" title="任务1——基础"></a>任务1——基础</h1><h1 id="任务2——工具-1"><a href="#任务2——工具-1" class="headerlink" title="任务2——工具"></a>任务2——工具</h1><h1 id="任务3——密码-1"><a href="#任务3——密码-1" class="headerlink" title="任务3——密码"></a>任务3——密码</h1><h3 id="·初等数论——模运算-逆元"><a href="#·初等数论——模运算-逆元" class="headerlink" title="·初等数论——模运算&amp;逆元"></a>·初等数论——模运算&amp;逆元</h3><div style="background: #3c3c3dff; border-left: 4px solid #ededeeff; padding: 12px 16px; border-radius: 4px; margin: 16px 0; color: #fff; line-height: 1.8;">
+模运算
+    A mod m （0 ≤ 结果 < m）
+
+<pre><code>性质（a、b、c 为整数，m 为正整数（模数））
+·减法：
+    (a - b) mod m = [(a mod m) - (b mod m) + m] mod m
+·乘法：
+    (a × b) mod m = [(a mod m) × (b mod m)] mod m
+·幂运算：
+    a^b mod m = [(a mod m)^b] mod m
+</code></pre>
+</div>
+
+<div class="marginalia-layout">
+
+<article class="main-content-1">
+<div style="background: #3c3c3dff; border-left: 4px solid #ededeeff; padding: 12px 16px; border-radius: 4px; margin: 16px 0;">
+·逆元
+    ·If  (a × b) mod m = 1 则b是a在模m下的逆元，（m*k+1=a*b
+        记： a⁻¹ mod m
+
+<pre><code>当我们回顾乘法性质
+    (a × b) mod m = [(a mod m) × (b mod m)] mod m
+    即说明(a mod m) × (b mod m)=1
+    再将逆元与倒数联系就好理解了
+
+·a在模m下存在逆元的充要条件：a和m互质
+
+·求解方法：
+    1.扩展欧几里得算法：——辗转相除法
+            ax + my = 1
+    Eg：求 3 mod 7 的逆元
+    解方程 3x + 7y = 1：7 = 2×3 + 13 = 3×1 + 0
+    回代：1 = 7 - 2×3 → 对应 x=-2，y=1
+    调整 x 为正：-2 mod7=5，故逆元为 5。
+    （其中用到减法性质）
+    2.费马小定理（仅适用于 m 为质数的场景）
+    a与m互质，且m为质数：
+    逆元：a^(m-2) mod m
+</code></pre>
+</div>
+</article>
+
+<h3 id="Base系列编码——learning-from-deepseek"><a href="#Base系列编码——learning-from-deepseek" class="headerlink" title="Base系列编码——learning from deepseek"></a>Base系列编码——learning from deepseek</h3><div style="background: #3c3c3dff; border-left: 4px solid #ededeeff; padding: 12px 16px; border-radius: 4px; margin: 16px 0; color: #fff; line-height: 1.8;">
+·base16
+
+<pre><code>基操：
+    4bit一组 
+    16进制
+
+应用：
+    颜色标识
+    哈希值/散列值
+    字符转义-url
+</code></pre>
+</div>
+<div style="background: #3c3c3dff; border-left: 4px solid #ededeeff; padding: 12px 16px; border-radius: 4px; margin: 16px 0; color: #fff; line-height: 1.8;">
+·base32
+
+<pre><code>基操：
+    5bit一组 
+    32字符映射关系：
+    A-Z, 2-7
+    （A 代表 0，B 代表 1，...，Z 代表 25，2 代表 26，3 代表 27，...，7 代表 31
+
+·使用填充：由于数据流的比特数不总是 5 的倍数，Base32 使用 = 作为填充字符
+          以确保编码后的字符串长度是 8 的倍数。
+        Eg ：hi被编码成JBUQ====
+</code></pre>
+</div>
+<div style="background: #3c3c3dff; border-left: 4px solid #ededeeff; padding: 12px 16px; border-radius: 4px; margin: 16px 0; color: #fff; line-height: 1.8;">
+·base64
+
+<pre><code>基操：
+6bit一组 
+    64字符映射关系：
+        26 个大写字母：A-Z
+        26 个小写字母：a-z
+        10 个数字：0-9
+        2 个额外符号：+ 和 /
+·使用填充：
+    Base64 使用 = 作为填充字符，以确保编码后的字符串长度是 4 的倍数。
+    eg：hi 被编码成aGk=  
+</code></pre>
+</div>
+
+<p>·异或加密：<br>规则：同取“0” 异取“1”<br>特性：<br>a ^ b &#x3D; c<br>c ^ b &#x3D; a  # 加密和解密使用相同的密钥<br>&#x3D;&gt;(a ^ b)^ b&#x3D;a</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#举一个deepseek的简单例子</span></span><br><span class="line">def simple_xor_encrypt(text, key):</span><br><span class="line">    <span class="string">&quot;&quot;</span><span class="string">&quot;简单的异或加密函数&quot;</span><span class="string">&quot;&quot;</span></span><br><span class="line">    result = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> char <span class="keyword">in</span> text:</span><br><span class="line">        <span class="comment"># 对每个字符进行异或加密</span></span><br><span class="line">        encrypted_char = ord(char) ^ key</span><br><span class="line">        result += chr(encrypted_char)</span><br><span class="line">    <span class="built_in">return</span> result</span><br><span class="line">def simple_xor_decrypt(encrypted_text, key):</span><br><span class="line">    <span class="string">&quot;&quot;</span><span class="string">&quot;解密函数（其实和加密一模一样！）&quot;</span><span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="built_in">return</span> simp</span><br></pre></td></tr></table></figure>
+
+<p> 使用示例</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">message = <span class="string">&quot;HELLO&quot;</span></span><br><span class="line">secret_key = 42</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;=== 异或加密演示 ===&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(f<span class="string">&quot;原始消息: &#123;message&#125;&quot;</span>)</span><br><span class="line"><span class="comment"># 加密</span></span><br><span class="line">encrypted = simple_xor_encrypt(message, secret_key)</span><br><span class="line"><span class="built_in">print</span>(f<span class="string">&quot;加密后: &#123;encrypted&#125;&quot;</span>)</span><br><span class="line"><span class="comment"># 解密</span></span><br><span class="line">decrypted = simple_xor_decrypt(encrypted, secret_key)</span><br><span class="line"><span class="built_in">print</span>(f<span class="string">&quot;解密后: &#123;decrypted&#125;&quot;</span>)</span><br><span class="line">le_xor_encrypt(encrypted_text, key)</span><br></pre></td></tr></table></figure>
+<div style="background: #6e6e9fff; border-left: 4px solid #22222bff; padding: 12px 16px; border-radius: 4px; margin: 16px 0; color: #fff; line-height: 1.8;">
+    主要就是围绕这它的解密和加密的密钥是一个的特性
+
+<pre><code>如果就是逐个字符加密 或者 多次加密 或许就会更麻烦一点
+
+那要怎么知道密钥呢 要怎么知道它用了异或呢 如果它还叠加了其他密钥呢
+
+多次加密其实也只是多调用几次函数罢了
+
+但这具体放在工作中要怎么解密，也许是我需要掌握好IDA 
+
+放在汇编里就是xor
+</code></pre>
+</div>
+# 任务4——题目
+
 </div> 
 
 <script>
