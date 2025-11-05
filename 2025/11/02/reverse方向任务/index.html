@@ -230,22 +230,28 @@
 
 <p> 使用示例</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">message = <span class="string">&quot;HELLO&quot;</span></span><br><span class="line">secret_key = 42</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;=== 异或加密演示 ===&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(f<span class="string">&quot;原始消息: &#123;message&#125;&quot;</span>)</span><br><span class="line"><span class="comment"># 加密</span></span><br><span class="line">encrypted = simple_xor_encrypt(message, secret_key)</span><br><span class="line"><span class="built_in">print</span>(f<span class="string">&quot;加密后: &#123;encrypted&#125;&quot;</span>)</span><br><span class="line"><span class="comment"># 解密</span></span><br><span class="line">decrypted = simple_xor_decrypt(encrypted, secret_key)</span><br><span class="line"><span class="built_in">print</span>(f<span class="string">&quot;解密后: &#123;decrypted&#125;&quot;</span>)</span><br><span class="line">le_xor_encrypt(encrypted_text, key)</span><br></pre></td></tr></table></figure>
-<div style="background: #6e6e9fff; border-left: 4px solid #22222bff; padding: 12px 16px; border-radius: 4px; margin: 16px 0; color: #fff; line-height: 1.8;">
+<div style= border-left: 4px solid #22222bff; padding: 12px 16px; border-radius: 4px; margin: 16px 0; color: #fff; line-height: 1.8;">
     主要就是围绕这它的解密和加密的密钥是一个的特性
 
 <pre><code>如果就是逐个字符加密 或者 多次加密 或许就会更麻烦一点
-
 那要怎么知道密钥呢 要怎么知道它用了异或呢 如果它还叠加了其他密钥呢
-
 多次加密其实也只是多调用几次函数罢了
-
 但这具体放在工作中要怎么解密，也许是我需要掌握好IDA 
-
 放在汇编里就是xor
 </code></pre>
 </div>
-# 任务4——题目
 
+<p>·Rc4算法：<br>（本质是异或<br>·流密码算法<br>密钥生成“随机密钥流”再异或</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">def rc4_init(key):</span><br><span class="line">    <span class="string">&quot;&quot;</span><span class="string">&quot;初始化阶段：准备加密用的&quot;</span>密钥流<span class="string">&quot;&quot;</span><span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 创建一个0-255的数组</span></span><br><span class="line">    S = list(range(256))</span><br><span class="line">    j = 0            <span class="comment"># j就是随机指定的会被交换的位置 </span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 根据密钥打乱数组</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(256):</span><br><span class="line">        j = (j + S[i] + key[i % len(key)]) % 256</span><br><span class="line">        S[i], S[j] = S[j], S[i]  <span class="comment"># 交换位置</span></span><br><span class="line">    <span class="built_in">return</span> S</span><br></pre></td></tr></table></figure>
+<pre><code> 那这样的话 其实第一个交换的数一直在交换
+ 交换的依据主要就是i和密钥字长的关系
+ 那交换到什么时候不变呢 应该是没有可能的
+ i和j一直在变 除非i==j 或者 因为一些原因交换回来吧
+ 只有说i和j到一定程度是有呈现规律的变
+ 如果把范围再扩大一点，那确实，人脑似乎是比较难计算了
+</code></pre>
+<p>大致的过程就是：<br>1.密钥 及 长度<br>2.通过密钥对数组打乱<br>3.生成密钥流：这个过程和打乱数组挺像的<br>4.随后对密钥流进行逐个异或<br>麻烦的主要就是加密过程</p>
+<h1 id="任务4——题目-1"><a href="#任务4——题目-1" class="headerlink" title="任务4——题目"></a>任务4——题目</h1>
 </div> 
 
 <script>
