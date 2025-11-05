@@ -138,24 +138,23 @@
     <div class="post-content">
     <!-- toc -->
 
-<pre><code>      + [任务1——基础](#任务1基础)
-      + [任务2——工具](#任务2工具)
-      + [任务3——密码](#任务3密码)
-      + [任务4——题目](#任务4题目)
-</code></pre>
 <ul>
-<li><a href="#%E4%BB%BB%E5%8A%A11%E5%9F%BA%E7%A1%80-1">任务1——基础</a></li>
-<li><a href="#%E4%BB%BB%E5%8A%A12%E5%B7%A5%E5%85%B7-1">任务2——工具</a></li>
-<li><a href="#%E4%BB%BB%E5%8A%A13%E5%AF%86%E7%A0%81-1">任务3——密码</a><ul>
+<li><a href="#%E4%BB%BB%E5%8A%A11%E5%9F%BA%E7%A1%80">任务1——基础</a></li>
+<li><a href="#%E4%BB%BB%E5%8A%A12%E5%B7%A5%E5%85%B7">任务2——工具</a></li>
+<li><a href="#%E4%BB%BB%E5%8A%A13%E5%AF%86%E7%A0%81">任务3——密码</a><ul>
 <li><a href="#%E5%88%9D%E7%AD%89%E6%95%B0%E8%AE%BA%E6%A8%A1%E8%BF%90%E7%AE%97%E9%80%86%E5%85%83">·初等数论——模运算&amp;逆元</a></li>
 <li><a href="#base%E7%B3%BB%E5%88%97%E7%BC%96%E7%A0%81learning-from-deepseek">Base系列编码——learning from deepseek</a></li>
 </ul>
+<ul>
+<li><a href="#%E5%BC%82%E6%88%96%E5%8A%A0%E5%AF%86">异或加密：</a></li>
+<li><a href="#rc4%E7%AE%97%E6%B3%95">Rc4算法：</a></li>
+</ul>
 </li>
-<li><a href="#%E4%BB%BB%E5%8A%A14%E9%A2%98%E7%9B%AE-1">任务4——题目</a></li>
+<li><a href="#%E4%BB%BB%E5%8A%A14%E9%A2%98%E7%9B%AE">任务4——题目</a></li>
 </ul>
 <!-- tocstop -->
 
-<h6><span id="任务1基础">任务1——基础</span></h6><h6><span id="任务2工具">任务2——工具</span></h6><h6><span id="任务3密码">任务3——密码</span></h6><h6><span id="任务4题目">任务4——题目</span></h6><hr>
+<hr>
 <p>看起来会是入门时间比较长的一条路，但c语言和汇编语言大一已经学过了，所以是否会相对好一点。<br>在学习的过程中，我发现的我的学习来源很大部分都是来源于ai。那么后续对于ai信息的可靠性真的需要有一个很好的辨别的，以及对于信息的获取能力，需要有自己的提升。</p>
 <h1><span id="任务1基础">任务1——基础</span></h1><h1><span id="任务2工具">任务2——工具</span></h1><h1><span id="任务3密码">任务3——密码</span></h1><h3><span id="初等数论模运算amp逆元">·初等数论——模运算&amp;逆元</span></h3><div style="background: #3c3c3dff; border-left: 4px solid #ededeeff; padding: 12px 16px; border-radius: 4px; margin: 16px 0; color: #fff; line-height: 1.8;">
 模运算
@@ -244,7 +243,7 @@
 </code></pre>
 </div>
 
-<p>·异或加密：<br>规则：同取“0” 异取“1”<br>特性：<br>a ^ b &#x3D; c<br>c ^ b &#x3D; a  # 加密和解密使用相同的密钥<br>&#x3D;&gt;(a ^ b)^ b&#x3D;a</p>
+<h2><span id="异或加密">异或加密：</span></h2><p>规则：同取“0” 异取“1”<br>特性：<br>a ^ b &#x3D; c<br>c ^ b &#x3D; a  # 加密和解密使用相同的密钥<br>&#x3D;&gt;(a ^ b)^ b&#x3D;a</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#举一个deepseek的简单例子</span></span><br><span class="line">def simple_xor_encrypt(text, key):</span><br><span class="line">    <span class="string">&quot;&quot;</span><span class="string">&quot;简单的异或加密函数&quot;</span><span class="string">&quot;&quot;</span></span><br><span class="line">    result = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> char <span class="keyword">in</span> text:</span><br><span class="line">        <span class="comment"># 对每个字符进行异或加密</span></span><br><span class="line">        encrypted_char = ord(char) ^ key</span><br><span class="line">        result += chr(encrypted_char)</span><br><span class="line">    <span class="built_in">return</span> result</span><br><span class="line">def simple_xor_decrypt(encrypted_text, key):</span><br><span class="line">    <span class="string">&quot;&quot;</span><span class="string">&quot;解密函数（其实和加密一模一样！）&quot;</span><span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="built_in">return</span> simp</span><br></pre></td></tr></table></figure>
 
 <p> 使用示例</p>
@@ -260,7 +259,7 @@
 </code></pre>
 </div>
 
-<p>·Rc4算法：<br>（本质是异或<br>·流密码算法<br>密钥生成“随机密钥流”再异或</p>
+<h2><span id="rc4算法">Rc4算法：</span></h2><p>（本质是异或<br>·流密码算法<br>密钥生成“随机密钥流”再异或</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">def rc4_init(key):</span><br><span class="line">    <span class="string">&quot;&quot;</span><span class="string">&quot;初始化阶段：准备加密用的&quot;</span>密钥流<span class="string">&quot;&quot;</span><span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 创建一个0-255的数组</span></span><br><span class="line">    S = list(range(256))</span><br><span class="line">    j = 0            <span class="comment"># j就是随机指定的会被交换的位置 </span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 根据密钥打乱数组</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(256):</span><br><span class="line">        j = (j + S[i] + key[i % len(key)]) % 256</span><br><span class="line">        S[i], S[j] = S[j], S[i]  <span class="comment"># 交换位置</span></span><br><span class="line">    <span class="built_in">return</span> S</span><br></pre></td></tr></table></figure>
 <pre><code> 那这样的话 其实第一个交换的数一直在交换
  交换的依据主要就是i和密钥字长的关系
