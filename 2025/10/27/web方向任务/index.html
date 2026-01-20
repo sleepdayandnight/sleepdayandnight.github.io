@@ -128,7 +128,29 @@
     </div>
 </div>
     <div class="post-content">
-    <!--toc-->
+    <p>目录索引：</p>
+<!-- toc -->
+
+<ul>
+<li><a href="#%E4%BB%BB%E5%8A%A1%E4%B8%80">任务一</a><ul>
+<li><a href="#http%E7%9A%84%E8%AF%B7%E6%B1%82%E6%96%B9%E5%BC%8F">·HTTP的请求方式</a></li>
+<li><a href="#%E5%93%8D%E5%BA%94%E7%A0%81">·响应码</a></li>
+<li><a href="#http-%E8%AF%B7%E6%B1%82%E7%A4%BA%E4%BE%8B">·HTTP 请求示例</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BB%BB%E5%8A%A1%E4%BA%8C%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80">任务二——语言基础</a><ul>
+<li><a href="#php">·php</a></li>
+<li><a href="#html">·html</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BB%BB%E5%8A%A1%E4%B8%89sql%E6%B3%A8%E5%85%A5">任务三——sql注入</a><ul>
+<li><a href="#less-1">less-1</a></li>
+<li><a href="#less-5">Less-5</a></li>
+<li><a href="#less-11">less-11</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
 
 <h1><span id="任务一">任务一</span></h1><h2><span id="http的请求方式">·HTTP的请求方式</span></h2><table>
 <thead>
@@ -201,7 +223,8 @@
 <p>POST &#x2F;api&#x2F;graphs&#x2F;fulltext-search?haha&#x3D;123 HTTP&#x2F;1.1<br>Host: localhost<br>Cookie: xxx&#x3D;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br>User-Agent: Mozilla&#x2F;5.0 (Windows NT 10.0; Win64; x64) AppleWebKit&#x2F;537.36 (KHTML,like Gecko) Chrome&#x2F;140.0.0.0 Safari&#x2F;537.36 Edg&#x2F;140.0.0.0<br>Sec-Ch-Ua: “Chromium”;v&#x3D;”140”, “Not&#x3D;A?Brand”;v&#x3D;”24”, “Microsoft Edge”;v&#x3D;”140”Sec-Ch-Ua-Mobile: ?0<br>Accept: text&#x2F;html<br>Referer: <a target="_blank" rel="noopener" href="https://osgraph.com/">https://osgraph.com/</a><br>Accept-Encoding: gzip, deflate, br<br>Accept-Language: zh-CN,zh;q&#x3D;0.9,en;q&#x3D;0.8,en-GB;q&#x3D;0.7,en-US;q&#x3D;0.6<br>Connection: close<br>Content-Type: application&#x2F;x-www-form-urlencoded<br>Content-Length: 26<br>indexName&#x3D;github&amp;keyword&#x3D;1</p>
 </div>
 
-<h3><span id="解析">解析</span></h3><p>提交给 /api/graphs/fulltext-search 参数是haha=123 用的HTTP/1.1协议（可能我学的还浅，觉得这里不应该有参数咳咳）</p>
+<p>【解析】</p>
+<p>提交给 /api/graphs/fulltext-search 参数是haha=123 用的HTTP/1.1协议（可能我学的还浅，觉得这里不应该有参数咳咳）</p>
 <p>请求目标主机：localhost即服务器运行在自己主机上（所以这是自己搭建的靶机环境吗？）</p>
 <p>会话令牌：xxx=xxxxxxxxxxxxxxxxxxxxxxxxxxx</p>
 <p>客户端标识：mozilla/5.0兼容模式 用的Windows10 64位 edg浏览器</p>
