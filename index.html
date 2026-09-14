@@ -1,151 +1,642 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>队友请就位 | 30 人，首次成功连接</title>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --ink: #111111;
+      --paper: #fffdf5;
+      --red: #ff6b6b;
+      --teal: #4ecdc4;
+      --yellow: #ffe66d;
+      --mint: #95e1d3;
+      --coral: #f38181;
+      --blue: #86b7fe;
+      --shadow: 7px 7px 0 var(--ink);
+      --font-display: Impact, Haettenschweiler, "Arial Black", sans-serif;
+      --font-body: "Courier New", ui-monospace, monospace;
+    }
 
-    <meta name="author" content="John Doe">
+    * { box-sizing: border-box; }
+    html { background: var(--paper); }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background-color: var(--paper);
+      font-family: var(--font-body);
+    }
 
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 4px solid var(--teal); outline-offset: 3px; }
+    .app { min-height: 100vh; padding: 18px; }
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 18px;
+      padding: 12px 16px;
+      border: 4px solid var(--ink);
+      background: var(--yellow);
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark { width: 43px; height: 43px; border: 4px solid var(--ink); background: var(--red); display: grid; place-items: center; flex: 0 0 auto; }
+    .brand-title { font-family: var(--font-display); font-size: clamp(24px, 4vw, 42px); letter-spacing: 0; line-height: 1; }
+    .brand-sub { font-size: 12px; font-weight: 700; margin-top: 10px; }
+    .screen-tag { border: 3px solid var(--ink); background: var(--paper); padding: 9px 12px; font-weight: 700; font-size: 12px; white-space: nowrap; }
 
+    .nav { display: flex; flex-wrap: wrap; gap: 9px; margin: 0 0 18px; }
+    .nav-btn, .button {
+      border: 3px solid var(--ink);
+      border-radius: 0;
+      min-height: 44px;
+      padding: 9px 13px;
+      background: var(--paper);
+      color: var(--ink);
+      font-weight: 900;
+      box-shadow: 4px 4px 0 var(--ink);
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+    .nav-btn:hover, .button:hover { transform: translate(3px, 3px) rotate(-1deg); box-shadow: 1px 1px 0 var(--ink); }
+    .nav-btn:active, .button:active { transform: translate(4px, 4px) scale(.97); box-shadow: none; }
+    .nav-btn[aria-current="page"] { background: var(--teal); }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .button.primary { background: var(--red); }
+    .button.secondary { background: var(--teal); }
+    .button.yellow { background: var(--yellow); }
+    .button.black { background: var(--ink); color: var(--paper); }
+    .button.small { min-height: 38px; padding: 7px 10px; font-size: 12px; }
+    .button i, .nav-btn i { width: 17px; height: 17px; }
 
+    .view { display: none; }
+    .view.active { display: block; animation: enter .24s ease-out; }
+    @keyframes enter { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .hero, .panel, .team-card, .sticky, .topic-result, .paper, .photo-ref { border: 4px solid var(--ink); box-shadow: var(--shadow); }
+    .hero { min-height: calc(100vh - 190px); display: grid; grid-template-columns: 1.2fr .8fr; background: var(--red); overflow: hidden; }
+    .hero-copy { padding: clamp(28px, 6vw, 78px); display: flex; flex-direction: column; justify-content: center; }
+    .eyebrow { display: inline-block; width: fit-content; padding: 7px 10px; border: 3px solid var(--ink); background: var(--yellow); font-size: 13px; font-weight: 900; transform: rotate(-2deg); }
+    h1, h2, h3, p { margin-top: 0; }
+    h1, h2, h3 { font-family: var(--font-display); letter-spacing: 0; }
+    h1 { margin: 20px 0 16px; font-size: clamp(64px, 12vw, 156px); line-height: .82; font-weight: 900; }
+    h2 { margin-bottom: 10px; font-size: clamp(32px, 5vw, 60px); line-height: .9; }
+    h3 { margin-bottom: 8px; font-size: 24px; }
+    .lead { max-width: 38rem; font-size: clamp(15px, 2vw, 20px); font-weight: 700; line-height: 1.55; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+    .hero-art { position: relative; min-height: 390px; background: var(--teal); border-left: 4px solid var(--ink); overflow: hidden; }
+    .art-card { position: absolute; border: 4px solid var(--ink); padding: 16px; font-family: var(--font-display); font-size: clamp(30px, 4vw, 58px); line-height: .85; box-shadow: var(--shadow); }
+    .art-one { top: 13%; left: 12%; background: var(--yellow); transform: rotate(-3deg); }
+    .art-two { top: 39%; right: 9%; background: var(--paper); transform: rotate(2deg); }
+    .art-three { bottom: 10%; left: 21%; background: var(--coral); transform: rotate(-1deg); }
+    .art-square { position: absolute; width: 94px; height: 94px; border: 4px solid var(--ink); background: var(--blue); right: 17%; top: 10%; transform: rotate(2deg); }
+    .art-dot { position: absolute; width: 45px; height: 45px; border: 4px solid var(--ink); background: var(--red); right: 40%; bottom: 13%; transform: rotate(-2deg); }
 
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin: 16px 0 24px; }
+    .page-header p { max-width: 47rem; margin: 0; font-weight: 700; line-height: 1.5; }
+    .page-header .section-kicker { margin: 12px 0 18px; font-family: var(--font-body); font-size: clamp(14px, 2vw, 18px); line-height: 1.2; font-weight: 900; }
+    .page-header .section-title { margin: 0; font-size: clamp(44px, 7vw, 82px); line-height: .88; }
+    .page-header .section-title.inline { font-size: clamp(40px, 6vw, 72px); }
+    .page-number { font-family: var(--font-display); font-size: 52px; line-height: .8; color: var(--red); -webkit-text-stroke: 2px var(--ink); }
+    .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .85fr); gap: 20px; align-items: start; }
+    .panel { background: var(--paper); padding: clamp(17px, 3vw, 30px); }
+    .panel.teal { background: var(--teal); }
+    .panel.yellow { background: var(--yellow); }
+    .panel.red { background: var(--red); }
+    .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 18px; }
+    .timer { display: inline-flex; align-items: baseline; gap: 8px; border: 3px solid var(--ink); background: var(--paper); padding: 7px 11px; font-family: var(--font-display); }
+    .timer span { font-size: 32px; }
+    .field { display: grid; gap: 6px; font-weight: 900; font-size: 13px; }
+    input, textarea, select { width: 100%; min-height: 44px; padding: 10px; border: 3px solid var(--ink); border-radius: 0; background: var(--paper); color: var(--ink); }
+    textarea { min-height: 84px; resize: vertical; }
 
+    .qr-layout { display: grid; grid-template-columns: 176px 1fr; gap: 22px; align-items: center; }
+    .qr { width: 176px; aspect-ratio: 1; border: 8px solid var(--ink); padding: 9px; background: var(--paper); display: grid; grid-template-columns: repeat(9, 1fr); gap: 2px; }
+    .qr img { width: 100%; height: 100%; grid-column: 1 / -1; grid-row: 1 / -1; object-fit: contain; }
+    .qr b { background: var(--ink); }
+    .qr b:nth-child(3n), .qr b:nth-child(4n + 2), .qr b:nth-child(7n) { background: transparent; }
+    .qr .finder { background: var(--ink); position: relative; }
+    .qr .finder::after { content: ""; position: absolute; inset: 22%; background: var(--paper); border: 3px solid var(--ink); }
+    .qr-copy { font-weight: 900; line-height: 1.55; }
+    .qr-link { margin-top: 10px; display: inline-block; border: 3px solid var(--ink); background: var(--yellow); padding: 7px 9px; font-size: 12px; word-break: break-all; }
+    .join-sample { border: 4px solid var(--ink); background: var(--paper); padding: 18px; transform: rotate(1deg); box-shadow: 6px 6px 0 var(--ink); }
+    .phone-title { border-bottom: 3px solid var(--ink); margin: -18px -18px 16px; padding: 10px 14px; font-weight: 900; background: var(--mint); }
+    .draw-result { min-height: 118px; margin: 14px 0; border: 3px dashed var(--ink); padding: 14px; display: grid; place-items: center; text-align: center; font-family: var(--font-display); font-size: 24px; background: var(--paper); }
+    .team-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-top: 21px; }
+    .stat { min-height: 94px; border: 3px solid var(--ink); padding: 9px; font-weight: 900; background: var(--paper); }
+    .stat strong { display: block; margin-top: 7px; font-family: var(--font-display); font-size: 29px; }
+    .team-result { display: grid; grid-template-columns: repeat(5, minmax(150px, 1fr)); gap: 16px; margin-top: 23px; }
+    .team-card { padding: 13px; min-height: 238px; background: var(--paper); }
+    .team-card:nth-child(1) { background: var(--red); transform: rotate(-1deg); }
+    .team-card:nth-child(2) { background: var(--teal); transform: rotate(1deg); }
+    .team-card:nth-child(3) { background: var(--yellow); transform: rotate(-.5deg); }
+    .team-card:nth-child(4) { background: var(--mint); transform: rotate(1.5deg); }
+    .team-card:nth-child(5) { background: var(--blue); transform: rotate(-1.5deg); }
+    .team-label { display: block; border-bottom: 3px solid var(--ink); padding-bottom: 7px; margin-bottom: 9px; font-weight: 900; }
+    .roster { list-style: none; padding: 0; margin: 0; font-size: 13px; font-weight: 900; line-height: 1.75; }
 
+    .rules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .rule { border: 3px solid var(--ink); background: var(--paper); padding: 14px; min-height: 140px; }
+    .rule-no { font-family: var(--font-display); font-size: 40px; color: var(--red); -webkit-text-stroke: 1px var(--ink); line-height: 1; }
+    .rule p { margin: 7px 0 0; font-weight: 900; line-height: 1.45; }
+    .scoreboard { display: grid; gap: 11px; }
+    .group-score { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; border: 3px solid var(--ink); background: var(--paper); padding: 10px; font-weight: 900; }
+    .group-score b { width: 22px; height: 22px; border: 3px solid var(--ink); background: var(--teal); }
+    .group-score:nth-child(2) b { background: var(--red); }
+    .group-score:nth-child(3) b { background: var(--yellow); }
+    .group-score:nth-child(4) b { background: var(--mint); }
+    .group-score:nth-child(5) b { background: var(--blue); }
 
-<title>Hexo</title>
+    .wheel-wrap { display: grid; place-items: center; padding: 22px; }
+    .wheel-board { width: min(100%, 520px); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 4px solid var(--ink); box-shadow: var(--shadow); margin-bottom: 22px; }
+    .topic-slot { min-height: 102px; padding: 14px; border-right: 3px solid var(--ink); border-bottom: 3px solid var(--ink); background: var(--paper); font-family: var(--font-display); font-size: clamp(19px, 2.6vw, 27px); line-height: .95; text-align: left; }
+    .topic-slot:nth-child(2n) { border-right: 0; }
+    .topic-slot:nth-last-child(-n+2) { border-bottom: 0; }
+    .topic-slot:nth-child(1), .topic-slot:nth-child(6) { background: var(--red); }
+    .topic-slot:nth-child(2) { background: var(--teal); }
+    .topic-slot:nth-child(3) { background: var(--yellow); }
+    .topic-slot:nth-child(4) { background: var(--mint); }
+    .topic-slot:nth-child(5) { background: var(--blue); }
+    .topic-slot.active { outline: 6px solid var(--ink); outline-offset: -6px; color: var(--paper); background: var(--ink); }
+    .topic-result { background: var(--yellow); padding: 20px; margin: 20px 0; min-height: 94px; display: grid; place-items: center; text-align: center; font-family: var(--font-display); font-size: clamp(28px, 4vw, 46px); line-height: .95; }
+    .number-stage { min-height: 260px; display: grid; place-items: center; text-align: center; border: 4px solid var(--ink); background: var(--yellow); box-shadow: 8px 8px 0 var(--ink); font-family: var(--font-display); font-size: clamp(88px, 16vw, 180px); line-height: .8; }
+    .topic-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .topic-list span { padding: 6px 9px; border: 2px solid var(--ink); background: var(--paper); font-size: 12px; font-weight: 900; }
 
+    .paper { max-width: 940px; margin: 0 auto; background: var(--paper); padding: clamp(18px, 4vw, 42px); transform: rotate(-.3deg); }
+    .paper-head { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding-bottom: 16px; margin-bottom: 18px; border-bottom: 4px solid var(--ink); }
+    .paper-head h2 { margin: 0; }
+    .meta { display: flex; gap: 8px; align-items: start; flex-wrap: wrap; }
+    .meta span { border: 2px solid var(--ink); padding: 6px 8px; font-weight: 900; font-size: 12px; }
+    .mission-intro { font-weight: 900; line-height: 1.5; }
+    .task-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; border: 3px solid var(--ink); margin: 20px 0; }
+    .task { min-height: 90px; padding: 12px; border-right: 3px solid var(--ink); border-bottom: 3px solid var(--ink); font-weight: 900; display: grid; grid-template-columns: 1fr 64px; gap: 8px; }
+    .task:nth-child(2n) { border-right: 0; }
+    .task:nth-last-child(-n+2) { border-bottom: 0; }
+    .signature { border: 2px dashed var(--ink); align-self: end; min-height: 33px; font-size: 11px; padding: 7px 4px; }
+    .safety { border: 3px solid var(--ink); background: var(--yellow); padding: 10px; font-size: 12px; font-weight: 900; }
 
+    .photo-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: 19px; }
+    .photo-ref { position: relative; background: var(--ink); min-height: 380px; overflow: hidden; }
+    .photo-ref img { width: 100%; height: 100%; min-height: 380px; object-fit: cover; display: block; filter: saturate(1.1) contrast(1.03); }
+    .photo-badge { position: absolute; left: 18px; bottom: 18px; padding: 9px 11px; border: 3px solid var(--ink); background: var(--yellow); font-weight: 900; transform: rotate(-2deg); }
+    .checklist { display: grid; gap: 11px; list-style: none; padding: 0; margin: 18px 0; }
+    .checklist li { border: 3px solid var(--ink); background: var(--paper); padding: 11px; font-weight: 900; }
+    .photo-timer { font-family: var(--font-display); font-size: clamp(68px, 10vw, 115px); line-height: .8; margin: 21px 0; }
 
-    <link rel="icon" href="/favicon.ico">
+    .sticky-layout { display: grid; grid-template-columns: minmax(210px, .34fr) 1fr; gap: 20px; align-items: start; }
+    .question-menu { display: grid; gap: 10px; }
+    .question-btn { text-align: left; border: 3px solid var(--ink); padding: 12px; background: var(--paper); font-weight: 900; box-shadow: 4px 4px 0 var(--ink); transition: transform .16s ease, box-shadow .16s ease; }
+    .question-btn:hover { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--ink); }
+    .question-btn.active { background: var(--teal); }
+    .sticky-stage { min-height: 510px; background: var(--ink); padding: clamp(16px, 3vw, 28px); }
+    .sticky-title { color: var(--paper); font-family: var(--font-display); font-size: clamp(35px, 5vw, 72px); line-height: .85; margin: 0 0 20px; }
+    .sticky-wall { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; }
+    .sticky { min-height: 150px; padding: 13px; background: var(--yellow); box-shadow: 5px 5px 0 rgba(255,255,255,.82); transform: rotate(-2deg); display: flex; flex-direction: column; justify-content: space-between; animation: sticky-pop .42s cubic-bezier(.34,1.56,.64,1) both; }
+    .sticky:nth-child(2n) { background: var(--red); transform: rotate(2deg); }
+    .sticky:nth-child(3n) { background: var(--teal); transform: rotate(-1deg); }
+    .sticky:nth-child(5n) { background: var(--mint); transform: rotate(1deg); }
+    @keyframes sticky-pop { from { opacity: 0; transform: translateY(28px) scale(.72) rotate(-2deg); } to { opacity: 1; transform: translateY(0) scale(1) rotate(-2deg); } }
+    .sticky p { line-height: 1.4; font-size: 13px; font-weight: 900; margin: 0 0 12px; }
+    .sticky-bottom { display: flex; justify-content: space-between; align-items: center; gap: 8px; border-top: 2px solid var(--ink); padding-top: 8px; font-size: 11px; font-weight: 900; }
+    .like { border: 2px solid var(--ink); border-radius: 0; padding: 5px 7px; background: var(--paper); color: var(--ink); font-weight: 900; }
+    .like:hover { background: var(--yellow); }
+    .note-form { margin-top: 20px; display: grid; grid-template-columns: 120px 1fr auto; gap: 10px; align-items: end; }
+    .note-form textarea { min-height: 44px; height: 44px; }
+    .empty-wall { color: var(--paper); font-weight: 900; padding: 12px; }
+    .live-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 17px; color: var(--ink); }
+    .live-strip span { border: 3px solid var(--ink); padding: 7px 9px; font-size: 12px; font-weight: 900; background: var(--paper); }
 
-
-
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Roboto+Mono&display=swap');
-</style>
-
-
-
-    <!-- stylesheets list from _config.yml -->
-    
-    <link rel="stylesheet" href="/css/style.css">
-    
-
-
-
-
-    <!-- scripts list from _config.yml -->
-    
-    <script src="/js/menu.js"></script>
-    
-
-
-
-
-
-
-
-
-
-
-  <meta name="generator" content="Hexo 8.0.0"></head>
-  <body>
-    <div class="mask-border">
-    </div>
-
-    <div class="wrapper">
-
-      <div class="header">
-  <div class="flex-container">
-    <div class="header-inner">
-      <div class="site-brand-container">
-        <a href="/">
-          
-            May&#39;s world
-          
-        </a>
+    .bottom-nav { display: flex; justify-content: space-between; gap: 12px; margin: 24px 0 4px; }
+    .hidden { display: none !important; }
+    @media (max-width: 820px) {
+      .app { padding: 11px; }
+      .topbar { grid-template-columns: 1fr; }
+      .screen-tag { width: fit-content; }
+      .hero, .split, .photo-layout, .sticky-layout { grid-template-columns: 1fr; }
+      .hero-art { border-left: 0; border-top: 4px solid var(--ink); min-height: 330px; }
+      .team-result { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .team-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .sticky-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 540px) {
+      .brand-sub { line-height: 1.35; }
+      .nav { gap: 7px; }
+      .nav-btn { padding: 8px; font-size: 12px; }
+      .qr-layout, .rules, .note-form { grid-template-columns: 1fr; }
+      .qr { margin: 0 auto; }
+      .team-result, .sticky-wall, .task-grid { grid-template-columns: 1fr; }
+      .task { border-right: 0; }
+      .task:nth-last-child(-n+2) { border-bottom: 3px solid var(--ink); }
+      .task:last-child { border-bottom: 0; }
+      .paper-head { grid-template-columns: 1fr; }
+      .sticky-stage { min-height: 0; }
+      .bottom-nav { flex-wrap: wrap; }
+    }
+    @media print {
+      body { background: #fff; }
+      .topbar, .nav, .page-header, .bottom-nav, .paper + .bottom-nav { display: none !important; }
+      .view { display: none !important; }
+      #mission { display: block !important; }
+      .paper { box-shadow: none; border: 2px solid #000; transform: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+    .participant { display: none; }
+    .join-mode .host-app { display: none; }
+    .join-mode .participant { min-height: 100vh; display: grid; place-items: center; padding: 18px; background: var(--teal); }
+    .participant-card { width: min(100%, 540px); border: 4px solid var(--ink); background: var(--paper); padding: 24px; box-shadow: var(--shadow); }
+    .participant-card h1 { font-size: clamp(54px, 17vw, 92px); }
+    .participant-card p { font-weight: 900; line-height: 1.55; }
+    .participant-topline { display: flex; justify-content: space-between; gap: 12px; border-bottom: 3px solid var(--ink); padding-bottom: 12px; margin-bottom: 22px; font-weight: 900; font-size: 12px; }
+    .participant-result { min-height: 144px; display: grid; place-items: center; text-align: center; border: 4px solid var(--ink); padding: 20px; background: var(--yellow); font-family: var(--font-display); font-size: 34px; line-height: .9; box-shadow: 5px 5px 0 var(--ink); }
+    .participant-result small { display: block; margin-top: 9px; font: 900 12px var(--font-body); }
+    .participant-section { margin-top: 22px; border-top: 4px solid var(--ink); padding-top: 20px; }
+    .participant-section h2 { font-size: 29px; }
+    .participant-note-list { display: grid; gap: 10px; margin-top: 15px; }
+    .participant-note { border: 3px solid var(--ink); background: var(--mint); padding: 12px; font-weight: 900; }
+    .participant-note p { margin-bottom: 10px; }
+    .participant-note button { min-height: 38px; }
+    .realtime-status { margin-top: 12px; border: 3px solid var(--ink); padding: 8px 10px; background: var(--paper); font-size: 12px; font-weight: 900; }
+    .live-connected #demoDraw, .live-connected #drawTeams, .live-connected .join-sample, .live-connected #sampleNotes, .live-connected #noteForm { display: none; }
+  </style>
+</head>
+<body>
+  <main class="app host-app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark"><i data-lucide="network" aria-hidden="true"></i></div>
+        <div>
+          <div class="brand-title">队友请就位</div>
+          <div class="brand-sub">30 人，首次成功连接</div>
+        </div>
       </div>
-      <div id="menu-btn" class="menu-btn" onclick="toggleMenu()">
-        Menu
-      </div>
-      <nav class="site-nav">
-        <ul class="menu-list">
-          
-            
-              <li class="menu-item menu-item-active">
-                <a href="/">Home</a>
-              </li> 
-                   
-          
-            
-              <li class="menu-item">
-                <a href="/archives/">Archive</a>
-              </li> 
-                   
-          
-            
-              <li class="menu-item">
-                <a href="/categories/gallery/">Gallery</a>
-              </li> 
-                   
-          
-          
-        </ul>
-      </nav>
-    </div>
-  </div>
-</div>
-<script src="/js/menu.js"></script>
+      <div class="screen-tag">网安新生破冰活动 / HOST SCREEN</div>
+    </header>
 
+    <nav class="nav" aria-label="活动环节">
+      <button class="nav-btn" data-view="home" aria-current="page"><i data-lucide="house" aria-hidden="true"></i>开场</button>
+      <button class="nav-btn" data-view="teams"><i data-lucide="shuffle" aria-hidden="true"></i>扫码抽色</button>
+      <button class="nav-btn" data-view="snowball"><i data-lucide="brain" aria-hidden="true"></i>滚雪球</button>
+      <button class="nav-btn" data-view="wind"><i data-lucide="wind" aria-hidden="true"></i>大小风吹</button>
+      <button class="nav-btn" data-view="numbers"><i data-lucide="users" aria-hidden="true"></i>数字抱团</button>
+      <button class="nav-btn" data-view="photo"><i data-lucide="camera" aria-hidden="true"></i>姿势重构</button>
+      <button class="nav-btn" data-view="mission"><i data-lucide="clipboard-check" aria-hidden="true"></i>请问可不可以</button>
+      <button class="nav-btn" data-view="sticky"><i data-lucide="sticky-note" aria-hidden="true"></i>大学之最</button>
+    </nav>
 
-      <div class="main">
-        <div class="flex-container">
-          <div class="profile">
-    <div class="profile-image">
-        
-            <img src="/profile_cover.png" alt="featured_image">
-          
-    </div>
-    <div class="post-content profile-content">
-        <div class="profile-title">
-            Hi, this is May.
+    <section class="view active" id="home">
+      <div class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow">NETWORK SECURITY / FRESHERS 2026</span>
+          <h1>队友<br>请就位</h1>
+          <p class="lead">30 位新同学，从第一次握手开始，完成一场真正的连接。</p>
+          <div class="hero-actions">
+            <button class="button black" data-go="teams"><i data-lucide="play" aria-hidden="true"></i>开启活动</button>
+            <button class="button yellow" data-go="sticky"><i data-lucide="messages-square" aria-hidden="true"></i>大学之最</button>
+          </div>
         </div>
-        <div class="profile-body">
-            welcome to my world.
-        </div>
-        
-            <div class="profile-link">
-                <a href="/">Home</a> 
-            </div>           
-        
-            <div class="profile-link">
-                <a href="/archives/">Blogs</a> 
-            </div>           
-        
-    </div>
-    
-</div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="art-square"></div><div class="art-dot"></div>
+          <div class="art-card art-one">5 队<br>就位</div>
+          <div class="art-card art-two">30 人<br>连接</div>
+          <div class="art-card art-three">一起<br>出发</div>
         </div>
       </div>
-      
-      <div class="footer">
-    <div class="flex-container">
-        <div class="footer-text">
-            
-            
-            
-                Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a> & <a target="_blank" rel="noopener" href="https://github.com/zoeingwingkei/frame/">Frame</a>
-                
+    </section>
+
+    <section class="view" id="teams">
+      <div class="page-header"><div><h2 class="section-title">扫码抽色</h2><div class="section-kicker">找到队友</div><p>每人随机抽取一种颜色，五支队伍同步成形。颜色和编号一起显示，集合时更容易辨认。</p></div><div class="page-number">01</div></div>
+      <div class="split">
+        <div class="panel teal">
+          <div class="qr-layout">
+            <div class="qr" id="joinQr" aria-label="参与端二维码示意">
+              <b class="finder"></b><b></b><b></b><b></b><b></b><b></b><b class="finder"></b><b></b><b></b>
+              <b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b>
+              <b></b><b></b><b class="finder"></b><b></b><b></b><b></b><b></b><b></b><b></b>
+              <b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b>
+              <b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b>
+              <b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b>
+              <b class="finder"></b><b></b><b></b><b></b><b></b><b></b><b class="finder"></b><b></b><b></b>
+              <b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b>
+              <b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b>
+            </div>
+            <div class="qr-copy"><h3>抽取你的队伍颜色</h3><p>扫码后填写昵称，再点击抽色。每种颜色限 6 人，系统会在空位最多的颜色中随机分配。</p><span class="qr-link" id="joinUrl">准备参与端链接</span><div class="realtime-status" id="realtimeStatus">等待实时服务连接</div></div>
+          </div>
+          <div class="team-stats" id="teamStats" aria-live="polite"></div>
+          <div class="controls"><button class="button primary" id="demoDraw"><i data-lucide="sparkles" aria-hidden="true"></i>演示抽色</button><button class="button black" id="drawTeams"><i data-lucide="users-round" aria-hidden="true"></i>生成 5 队名单</button></div>
         </div>
-    </div>
-</div>
+        <aside class="join-sample">
+          <div class="phone-title">参与端预览</div>
+          <label class="field">昵称<input id="sampleName" maxlength="10" value="小林"></label>
+          <div class="draw-result" id="drawResult">等待抽色</div>
+          <button class="button yellow" id="phoneDraw"><i data-lucide="shuffle" aria-hidden="true"></i>抽取我的颜色</button>
+        </aside>
+      </div>
+      <div class="team-result" id="teamResult" aria-live="polite"></div>
+      <div class="bottom-nav"><button class="button" data-prev><i data-lucide="arrow-left" aria-hidden="true"></i>上一页</button><button class="button secondary" data-next>滚雪球式<i data-lucide="arrow-right" aria-hidden="true"></i></button></div>
+    </section>
 
-    </div>
+    <section class="view" id="snowball">
+      <div class="page-header"><div><h2 class="section-title">滚雪球式</h2><div class="section-kicker">小组抢号 · 顺序发言 · 记录成绩</div><p>大家依次进行自我介绍，格式“我是 XX。”后面的人，需要完整复述前面所有人的名字，再介绍自己。每组先抢号决定发言顺序，主持人记录本组完成时间。</p></div><div class="page-number">02</div></div>
+      <div class="split">
+        <div class="panel yellow">
+          <div class="rules">
+            <article class="rule"><div class="rule-no">01</div><p>每位同学自己创造一个描述自己的形容词，加上名字完成首次介绍。</p></article>
+            <article class="rule"><div class="rule-no">02</div><p>小组成员在手机端或大屏抢号，按号码决定发言顺序。</p></article>
+            <article class="rule"><div class="rule-no">03</div><p>后一位完整复述前面所有人的名字，再介绍自己。</p></article>
+            <article class="rule"><div class="rule-no">04</div><p>主持人分别开始、结束并保存每组成绩，最后展示时间排行榜。</p></article>
+          </div>
+          <div class="controls"><label class="field">本轮时长<select id="snowDuration"><option value="180">3 分钟</option><option value="240">4 分钟</option><option value="300">5 分钟</option></select></label><div class="timer">剩余 <span id="snowTimer">03:00</span></div><button class="button primary" id="startSnow"><i data-lucide="timer" aria-hidden="true"></i>启动比赛</button></div>
+        </div>
+        <aside class="panel red"><h3>小组核验板</h3><div class="scoreboard"><div class="group-score"><b></b><span>01 队 / 红色信号</span><strong>待核验</strong></div><div class="group-score"><b></b><span>02 队 / 青绿连接</span><strong>待核验</strong></div><div class="group-score"><b></b><span>03 队 / 明黄终端</span><strong>待核验</strong></div><div class="group-score"><b></b><span>04 队 / 薄荷防线</span><strong>待核验</strong></div><div class="group-score"><b></b><span>05 队 / 蓝色链路</span><strong>待核验</strong></div></div></aside>
+      </div>
+      <div class="bottom-nav"><button class="button" data-prev><i data-lucide="arrow-left" aria-hidden="true"></i>上一页</button><button class="button secondary" data-next>大小风吹<i data-lucide="arrow-right" aria-hidden="true"></i></button></div>
+    </section>
 
-    
-    
+    <section class="view" id="wind">
+      <div class="page-header"><div><h2 class="section-title">大小风吹</h2><div class="section-kicker">跑动换位 · 快速活跃气氛</div><p>选 1 名同学站在中央，其余同学坐在位置上。每轮更换不同的人物特征，没抢到座位的人成为下一轮中央主持人。</p></div><div class="page-number">03</div></div>
+      <div class="split"><div class="panel teal"><div class="rules"><article class="rule"><div class="rule-no">大风吹</div><p>主持人说“大风吹”，大家回应“吹什么？”。拥有该特征的人起身交换座位，主持人也可以抢占空位。</p></article><article class="rule"><div class="rule-no">小风吹</div><p>对话流程一致。没有该特征的人起身交换座位，没抢到位置的人进入下一轮。</p></article></div></div><aside class="panel yellow"><h3>人物特征示例</h3><div class="topic-list"><span>戴眼镜的人</span><span>喜欢甜食的人</span><span>穿黑色衣服的人</span><span>今天喝过奶茶的人</span><span>喜欢打游戏的人</span><span>有兄弟姐妹的人</span></div></aside></div>
+      <div class="bottom-nav"><button class="button" data-prev><i data-lucide="arrow-left" aria-hidden="true"></i>上一页</button><button class="button secondary" data-next>数字抱团<i data-lucide="arrow-right" aria-hidden="true"></i></button></div>
+    </section>
 
-  </body>
+    <section class="view" id="numbers">
+      <div class="page-header"><div><h2 class="section-title">数字抱团</h2><div class="section-kicker">随机报数 · 最后一轮 8 人</div><p>主持人点击报数，大家快速自由组队，每组人数等于播报数字。没有成功组成对应人数队伍的同学，本轮出局。</p></div><div class="page-number">04</div></div>
+      <div class="split"><div class="panel red"><div class="number-stage" id="numberStage">准备开始</div><div class="controls"><button class="button black" id="callNumber"><i data-lucide="megaphone" aria-hidden="true"></i>随机报数</button><button class="button yellow" id="nextNumber">下一轮</button></div></div><aside class="panel teal"><h3>轮次记录</h3><div class="scoreboard" id="numberHistory"><div class="group-score"><b></b><span>等待第一轮</span><strong>—</strong></div></div><p class="mission-intro">默认轮次：3 → 5 → 4 → 6 → 7 → 8。前五轮会在 3—7 人中随机安排，最后一轮固定 8 人。</p></aside></div>
+      <div class="bottom-nav"><button class="button" data-prev><i data-lucide="arrow-left" aria-hidden="true"></i>上一页</button><button class="button secondary" data-next>姿势重构<i data-lucide="arrow-right" aria-hidden="true"></i></button></div>
+    </section>
+
+    <section class="view" id="mission">
+      <div class="page-header"><div><h2 class="section-title">请问可以吗？</h2><div class="section-kicker">互动任务表</div><p>每位同学拿一张任务表，在 15 分钟内尽可能完成更多任务。每项任务需要寻找不同伙伴签名。</p></div><div class="page-number">04</div></div>
+      <article class="paper">
+        <div class="paper-head"><div><h2>请问可以吗？</h2><p>15 分钟互动任务表</p></div><div class="meta"><span>姓名：____________</span><span>年级：____________</span></div></div>
+        <p class="mission-intro">请在 15 分钟内尽可能多地完成任务，并邀请伙伴签名。一个伙伴只能协助完成一项任务。</p>
+        <div class="task-grid">
+          <div class="task"><span>和在场一个人手拉手转圈圈</span><span class="signature">伙伴签名</span></div><div class="task"><span>邀请一个人，互相模仿夸张的动作</span><span class="signature">伙伴签名</span></div>
+          <div class="task"><span>当面真诚地夸赞一个人</span><span class="signature">伙伴签名</span></div><div class="task"><span>帮一个人捶肩</span><span class="signature">伙伴签名</span></div>
+          <div class="task"><span>和一个人进行掰手腕</span><span class="signature">伙伴签名</span></div><div class="task"><span>和一个人对视超过 10 秒，保持不笑</span><span class="signature">伙伴签名</span></div>
+          <div class="task"><span>教一个人唱歌，对方至少跟唱两句</span><span class="signature">伙伴签名</span></div><div class="task"><span>把对方介绍给第三个人</span><span class="signature">伙伴签名</span></div>
+          <div class="task"><span>对一个人比心</span><span class="signature">伙伴签名</span></div><div class="task"><span>和一个人石头剪刀布</span><span class="signature">伙伴签名</span></div>
+        </div>
+        <div class="safety">参与以双方自愿、舒适和安全为前提；任何互动均可礼貌跳过或换成其他任务。</div>
+      </article>
+      <div class="bottom-nav"><button class="button yellow" onclick="window.print()"><i data-lucide="printer" aria-hidden="true"></i>打印任务表</button><span></span><button class="button secondary" data-next>大学之最<i data-lucide="arrow-right" aria-hidden="true"></i></button></div>
+    </section>
+
+    <section class="view" id="photo">
+      <div class="page-header"><div><h2 class="section-title">姿势重构</h2><div class="section-kicker">默契大挑战</div><p>每轮放出一张参考图，小组在 30 秒内协作摆出类似造型，拍照后一起展示。</p></div><div class="page-number">05</div></div>
+      <div class="photo-layout">
+        <figure class="photo-ref"><img id="poseImage" src="assets/photos/pose-01.jpg" alt="姿势重构参考照片"><figcaption class="photo-badge" id="poseCaption">本轮参考图 / 01</figcaption></figure>
+        <aside class="panel mint"><h3>全队一起复刻</h3><ul class="checklist"><li>全员都要进入画面</li><li>动作量力而行，拒绝危险动作</li><li>比拼创意与还原度</li></ul><div class="photo-timer" id="photoTimer">00:30</div><div class="controls"><button class="button black" id="startPhoto"><i data-lucide="timer" aria-hidden="true"></i>开始 30 秒</button><button class="button yellow" id="nextPose"><i data-lucide="refresh-cw" aria-hidden="true"></i>换一张</button></div></aside>
+      </div>
+      <div class="bottom-nav"><button class="button" data-prev><i data-lucide="arrow-left" aria-hidden="true"></i>上一页</button><button class="button secondary" data-next>大学之最<i data-lucide="arrow-right" aria-hidden="true"></i></button></div>
+    </section>
+
+    <section class="view" id="sticky">
+      <div class="page-header"><div><h2 class="section-title inline">大学之最 一起贴上去</h2><p>每一张便签提交后都会实时跳上大屏。看到喜欢的回答，也可以为它点赞。</p></div><div class="page-number">06</div></div>
+      <div class="sticky-layout">
+        <aside class="question-menu" id="questionMenu" aria-label="大学之最问题"></aside>
+        <div>
+          <div class="live-strip"><span id="currentQuestionLabel">题目 01</span><span id="pendingCount">已展示 0 条</span><button class="button small" id="sampleNotes"><i data-lucide="wand-sparkles" aria-hidden="true"></i>载入演示便签</button></div>
+          <div class="sticky-stage"><h3 class="sticky-title" id="stickyTitle"></h3><div class="sticky-wall" id="stickyWall" aria-live="polite"></div></div>
+          <form class="note-form" id="noteForm"><label class="field">昵称<input id="noteName" maxlength="10" value="小林"></label><label class="field">我的回答<textarea id="noteText" maxlength="60" placeholder="写下一句话"></textarea></label><button class="button primary" type="submit"><i data-lucide="plus" aria-hidden="true"></i>加入待贴区</button></form>
+        </div>
+      </div>
+      <div class="bottom-nav"><button class="button" data-prev><i data-lucide="arrow-left" aria-hidden="true"></i>上一页</button><button class="button black" data-go="home"><i data-lucide="house" aria-hidden="true"></i>回到开场</button></div>
+    </section>
+  </main>
+
+  <section class="participant" id="participantApp">
+    <article class="participant-card">
+      <div class="participant-topline"><span>队友请就位</span><span id="participantStatus">正在连接</span></div>
+      <div id="nameSetup">
+        <span class="eyebrow">30 人，首次成功连接</span>
+        <h1>先设置<br>昵称</h1>
+        <p>昵称只用于确认你的抽色和提交内容，不会出现在大屏。</p>
+        <form id="nicknameForm" class="field"><label for="nickname">我的昵称</label><input id="nickname" maxlength="10" autocomplete="nickname" placeholder="输入昵称" required><button class="button primary" type="submit"><i data-lucide="save" aria-hidden="true"></i>确认昵称</button></form>
+      </div>
+      <div id="participantReady" class="hidden">
+        <span class="eyebrow">队友请就位</span>
+        <h1>抽取<br>颜色</h1>
+        <p>点击后随机加入一支队伍。每种颜色刚好 6 人。</p>
+        <div class="participant-result" id="participantTeam">等待抽色</div>
+        <div class="controls"><button class="button black" id="participantDraw" type="button"><i data-lucide="shuffle" aria-hidden="true"></i>抽取我的颜色</button><button class="button small" id="editNickname" type="button">修改昵称</button></div>
+        <section class="participant-section" id="participantNotes">
+          <h2 id="mobileQuestion">大学之最</h2>
+          <form id="mobileNoteForm" class="field"><label for="mobileNote">写下你的答案</label><textarea id="mobileNote" maxlength="60" placeholder="用一句话留下你的回答"></textarea><button class="button secondary" type="submit"><i data-lucide="send" aria-hidden="true"></i>放入待贴区</button></form>
+          <div class="participant-note-list" id="mobileNotes"></div>
+        </section>
+      </div>
+      <div class="realtime-status" id="participantConnection">正在准备活动房间</div>
+    </article>
+  </section>
+
+  <script src="supabase-config.js"></script>
+  <script>
+    const views = [...document.querySelectorAll('.view')];
+    const navButtons = [...document.querySelectorAll('.nav-btn')];
+    const viewOrder = views.map(view => view.id);
+    let currentView = 'home';
+    function setView(id) {
+      currentView = id;
+      views.forEach(view => view.classList.toggle('active', view.id === id));
+      navButtons.forEach(button => button.setAttribute('aria-current', button.dataset.view === id ? 'page' : 'false'));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    navButtons.forEach(button => button.addEventListener('click', () => setView(button.dataset.view)));
+    document.querySelectorAll('[data-go]').forEach(button => button.addEventListener('click', () => setView(button.dataset.go)));
+    document.querySelectorAll('[data-next], [data-prev]').forEach(button => button.addEventListener('click', () => {
+      const step = button.hasAttribute('data-next') ? 1 : -1;
+      const index = viewOrder.indexOf(currentView);
+      setView(viewOrder[(index + step + viewOrder.length) % viewOrder.length]);
+    }));
+    document.addEventListener('keydown', event => {
+      if (event.target.matches('input, textarea, select')) return;
+      if (event.key === 'ArrowRight') document.querySelector(`#${currentView} [data-next]`)?.click();
+      if (event.key === 'ArrowLeft') document.querySelector(`#${currentView} [data-prev]`)?.click();
+    });
+
+    const teamNames = ['红色信号', '青绿连接', '明黄终端', '薄荷防线', '蓝色链路'];
+    const teamColors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#95e1d3', '#86b7fe'];
+    const teamCounts = [0, 0, 0, 0, 0];
+    const teamStats = document.getElementById('teamStats');
+    const drawResult = document.getElementById('drawResult');
+    function renderStats() {
+      teamStats.innerHTML = teamNames.map((name, index) => `<div class="stat" style="background:${teamColors[index]}">${String(index + 1).padStart(2, '0')} 队<strong>${teamCounts[index]} / 6</strong></div>`).join('');
+    }
+    function drawColor(name) {
+      const open = teamCounts.map((count, index) => ({ count, index })).filter(team => team.count < 6);
+      if (!open.length) { drawResult.textContent = '全部队伍已满'; return; }
+      const smallest = Math.min(...open.map(team => team.count));
+      const choices = open.filter(team => team.count === smallest);
+      const chosen = choices[Math.floor(Math.random() * choices.length)].index;
+      teamCounts[chosen] += 1;
+      drawResult.style.background = teamColors[chosen];
+      drawResult.innerHTML = `${name || '新同学'}<br>${teamNames[chosen]}`;
+      renderStats();
+    }
+    document.getElementById('phoneDraw').addEventListener('click', () => drawColor(document.getElementById('sampleName').value.trim()));
+    document.getElementById('demoDraw').addEventListener('click', () => drawColor(`同学 ${teamCounts.reduce((a, b) => a + b, 0) + 1}`));
+    document.getElementById('drawTeams').addEventListener('click', () => {
+      const people = Array.from({ length: 30 }, (_, index) => `同学 ${String(index + 1).padStart(2, '0')}`);
+      for (let i = people.length - 1; i > 0; i -= 1) { const j = Math.floor(Math.random() * (i + 1)); [people[i], people[j]] = [people[j], people[i]]; }
+      const result = document.getElementById('teamResult');
+      result.innerHTML = teamNames.map((team, teamIndex) => {
+        const members = people.slice(teamIndex * 6, teamIndex * 6 + 6);
+        return `<article class="team-card"><span class="team-label">${String(teamIndex + 1).padStart(2, '0')} 队 / ${team}</span><ol class="roster">${members.map((member, index) => `<li>${index + 1}. ${member}</li>`).join('')}</ol></article>`;
+      }).join('');
+      teamCounts.splice(0, 5, 6, 6, 6, 6, 6); renderStats();
+      result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    renderStats();
+
+    let snowInterval;
+    function formatTime(seconds) { return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`; }
+    const snowTimer = document.getElementById('snowTimer');
+    document.getElementById('snowDuration').addEventListener('change', event => { clearInterval(snowInterval); snowTimer.textContent = formatTime(Number(event.target.value)); });
+    document.getElementById('startSnow').addEventListener('click', event => {
+      clearInterval(snowInterval); let left = Number(document.getElementById('snowDuration').value); snowTimer.textContent = formatTime(left); event.currentTarget.disabled = true;
+      snowInterval = setInterval(() => { left -= 1; snowTimer.textContent = formatTime(Math.max(left, 0)); if (!left) { clearInterval(snowInterval); event.currentTarget.disabled = false; } }, 1000);
+    });
+
+    const numberRounds = [3, 5, 4, 6, 7, 8]; let numberIndex = 0;
+    const numberStage = document.getElementById('numberStage'); const numberHistory = document.getElementById('numberHistory');
+    document.getElementById('callNumber').addEventListener('click', () => {
+      const target = numberRounds[numberIndex] ?? 8; numberStage.textContent = target; numberStage.style.background = teamColors[numberIndex % teamColors.length];
+      numberHistory.innerHTML = numberRounds.slice(0, numberIndex + 1).map((value, index) => `<div class="group-score"><b></b><span>第 ${index + 1} 轮</span><strong>${value} 人</strong></div>`).join('');
+    });
+    document.getElementById('nextNumber').addEventListener('click', () => { numberIndex = Math.min(numberIndex + 1, numberRounds.length - 1); numberStage.textContent = '准备报数'; numberStage.style.background = 'var(--yellow)'; });
+
+    let photoInterval;
+    const poseImages = Array.from({ length: 10 }, (_, index) => `assets/photos/pose-${String(index + 1).padStart(2, '0')}.jpg`);
+    let poseIndex = 0;
+    document.getElementById('nextPose').addEventListener('click', () => {
+      poseIndex = (poseIndex + 1) % poseImages.length;
+      document.getElementById('poseImage').src = poseImages[poseIndex];
+      document.getElementById('poseCaption').textContent = `本轮参考图 / ${String(poseIndex + 1).padStart(2, '0')}`;
+    });
+    document.getElementById('startPhoto').addEventListener('click', event => { clearInterval(photoInterval); let left = 30; event.currentTarget.disabled = true; const output = document.getElementById('photoTimer'); output.textContent = '00:30'; photoInterval = setInterval(() => { left -= 1; output.textContent = `00:${String(Math.max(0, left)).padStart(2, '0')}`; if (!left) { clearInterval(photoInterval); event.currentTarget.disabled = false; } }, 1000); });
+
+    const questions = ['大学之后我最想吐槽的事', '大学之后我最想夸夸的是', '大学之后我最想做的事', '进入大学之后我担心的事情', '进入大学之后变化最大的是'];
+    const demoAnswers = [
+      ['小林', '早八像一次系统压力测试。'], ['阿哲', '食堂窗口排队的算法还可以优化。'], ['安安', '宿舍的室友真的很会照顾人。'], ['小谢', '我想加入一个能一起做事的社团。'], ['乐乐', '担心课多之后没时间坚持运动。'], ['小周', '我开始敢主动和陌生人打招呼了。']
+    ];
+    let selectedQuestion = 0; let pending = []; let notes = [];
+    const menu = document.getElementById('questionMenu'); const wall = document.getElementById('stickyWall');
+    function renderQuestions() { menu.innerHTML = questions.map((question, index) => `<button class="question-btn ${index === selectedQuestion ? 'active' : ''}" data-question="${index}">${String(index + 1).padStart(2, '0')} / ${question}</button>`).join(''); menu.querySelectorAll('[data-question]').forEach(button => button.addEventListener('click', () => { selectedQuestion = Number(button.dataset.question); pending = []; notes = []; renderSticky(); renderQuestions(); })); }
+    function renderSticky() {
+      document.getElementById('stickyTitle').textContent = questions[selectedQuestion];
+      document.getElementById('currentQuestionLabel').textContent = `题目 ${String(selectedQuestion + 1).padStart(2, '0')}`;
+      document.getElementById('pendingCount').textContent = `已展示 ${notes.length} 条`;
+      wall.innerHTML = notes.length ? notes.map((note, index) => `<article class="sticky"><p>${note.text}</p><div class="sticky-bottom"><span>匿名便签</span><button class="like" data-like="${index}" aria-label="点赞这张便签"><i data-lucide="thumbs-up" aria-hidden="true"></i> ${note.likes}</button></div></article>`).join('') : '<div class="empty-wall">等待第一张便签出现</div>';
+      wall.querySelectorAll('[data-like]').forEach(button => button.addEventListener('click', () => { notes[Number(button.dataset.like)].likes += 1; renderSticky(); }));
+      if (window.lucide) lucide.createIcons();
+    }
+    document.getElementById('noteForm').addEventListener('submit', event => { event.preventDefault(); const name = document.getElementById('noteName').value.trim() || '匿名'; const text = document.getElementById('noteText').value.trim(); if (!text) return; notes.push({ name, text, likes: 0 }); document.getElementById('noteText').value = ''; renderSticky(); });
+    document.getElementById('sampleNotes').addEventListener('click', () => { notes = demoAnswers.map(([name, text]) => ({ name, text, likes: Math.floor(Math.random() * 6) })); renderSticky(); });
+    renderQuestions(); renderSticky();
+    if (window.lucide) lucide.createIcons();
+  </script>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    const settings = new URLSearchParams(location.search);
+    const isJoin = settings.get('mode') === 'join';
+    const newRoomId = () => `room-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+    const roomId = settings.get('room') || (isJoin ? 'team-ready-2026' : localStorage.getItem('team-ready-room') || newRoomId());
+    if (!isJoin && !settings.get('room')) localStorage.setItem('team-ready-room', roomId);
+    const rootUrl = new URL(location.href); rootUrl.search = ''; rootUrl.hash = '';
+    const joinUrl = new URL(rootUrl.href); joinUrl.searchParams.set('mode', 'join'); joinUrl.searchParams.set('room', roomId);
+    const safe = value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+    const groups = [{ name: '红色信号', color: '#ff6b6b' }, { name: '青绿连接', color: '#4ecdc4' }, { name: '明黄终端', color: '#ffe66d' }, { name: '薄荷防线', color: '#95e1d3' }, { name: '蓝色链路', color: '#86b7fe' }];
+    const questionsLive = ['大学之后我最想吐槽的事', '大学之后我最想夸夸的是', '大学之后我最想做的事', '进入大学之后我担心的事情', '进入大学之后变化最大的是'];
+    document.body.classList.toggle('join-mode', isJoin);
+    document.getElementById('joinUrl').textContent = joinUrl.href;
+    document.getElementById('joinQr').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(joinUrl.href)}" alt="扫码进入参与端" width="160" height="160">`;
+
+    const config = window.TEAM_READY_SUPABASE_CONFIG;
+    const hostStatus = document.getElementById('realtimeStatus');
+    const participantStatus = document.getElementById('participantStatus');
+    const participantConnection = document.getElementById('participantConnection');
+    if (!config?.url || !config?.anonKey) {
+      hostStatus.textContent = '演示模式：填入 Supabase 配置后开启手机实时连接';
+      participantStatus.textContent = '尚未连接';
+      participantConnection.textContent = '该演示页需要 Supabase 配置后才能参与活动';
+    } else {
+      document.body.classList.add('live-connected');
+      const supabase = createClient(config.url, config.anonKey);
+      const newClientId = () => globalThis.crypto?.randomUUID?.() || `client-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+      const clientId = localStorage.getItem('team-ready-client-id') || newClientId();
+      localStorage.setItem('team-ready-client-id', clientId);
+      let nickname = localStorage.getItem(`team-ready-name-${roomId}`) || '';
+      let currentRoom = { active_question: 0 };
+
+      function renderHost(players, notes) {
+        const counts = groups.map((group, index) => players.filter(player => player.team === index).length);
+        document.getElementById('teamStats').innerHTML = groups.map((group, index) => `<div class="stat" style="background:${group.color}">${String(index + 1).padStart(2, '0')} 队<strong>${counts[index]} / 6</strong></div>`).join('');
+        document.getElementById('teamResult').innerHTML = '';
+        const active = currentRoom.active_question ?? 0;
+        document.getElementById('stickyTitle').textContent = questionsLive[active];
+        document.getElementById('currentQuestionLabel').textContent = `题目 ${String(active + 1).padStart(2, '0')}`;
+        const list = notes.filter(note => note.question === active).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        document.getElementById('pendingCount').textContent = `已展示 ${list.length} 条`;
+        document.getElementById('stickyWall').innerHTML = list.length ? list.map(note => `<article class="sticky"><p>${safe(note.body)}</p><div class="sticky-bottom"><span>匿名便签</span><span><i data-lucide="thumbs-up" aria-hidden="true"></i> ${Number(note.likes || 0)}</span></div></article>`).join('') : '<div class="empty-wall">等待第一张便签出现</div>';
+        document.querySelectorAll('#questionMenu [data-question]').forEach(button => button.classList.toggle('active', Number(button.dataset.question) === active));
+        if (window.lucide) lucide.createIcons();
+      }
+
+      function renderParticipant(players, notes) {
+        if (!isJoin) return;
+        const player = players.find(item => item.client_id === clientId);
+        const question = currentRoom.active_question ?? 0;
+        document.getElementById('mobileQuestion').textContent = questionsLive[question];
+        document.getElementById('nameSetup').classList.toggle('hidden', Boolean(nickname));
+        document.getElementById('participantReady').classList.toggle('hidden', !nickname);
+        if (player) {
+          const group = groups[player.team]; const result = document.getElementById('participantTeam');
+          result.style.background = group.color; result.innerHTML = `${group.name}<small>请按颜色找到你的队友</small>`;
+          document.getElementById('participantDraw').disabled = true; document.getElementById('participantDraw').textContent = '已完成抽色';
+        }
+        const list = notes.filter(note => note.question === question).sort((a, b) => Number(b.likes || 0) - Number(a.likes || 0));
+        document.getElementById('mobileNotes').innerHTML = list.map(note => `<article class="participant-note"><p>${safe(note.body)}</p><button class="like" data-note-id="${note.id}"><i data-lucide="thumbs-up" aria-hidden="true"></i> 点赞 ${Number(note.likes || 0)}</button></article>`).join('');
+        document.querySelectorAll('[data-note-id]').forEach(button => button.addEventListener('click', async () => { await supabase.rpc('like_note', { p_note_id: button.dataset.noteId, p_client_id: clientId }); }));
+        if (window.lucide) lucide.createIcons();
+      }
+
+      async function refresh() {
+        const [roomResult, playersResult, notesResult] = await Promise.all([
+          supabase.from('rooms').select('*').eq('id', roomId).maybeSingle(),
+          supabase.from('players').select('client_id, team').eq('room_id', roomId),
+          supabase.from('notes').select('id, question, body, likes, created_at').eq('room_id', roomId)
+        ]);
+        currentRoom = roomResult.data || { active_question: 0 };
+        renderHost(playersResult.data || [], notesResult.data || []);
+        renderParticipant(playersResult.data || [], notesResult.data || []);
+      }
+
+      try {
+        if (!isJoin) await supabase.from('rooms').upsert({ id: roomId, active_question: 0 }, { onConflict: 'id', ignoreDuplicates: true });
+        hostStatus.textContent = `实时活动房间：${roomId}`; participantStatus.textContent = '已连接'; participantConnection.textContent = '已连接到活动房间';
+        document.getElementById('nickname').value = nickname;
+        await refresh();
+        supabase.channel(`team-ready-${roomId}`)
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms', filter: `id=eq.${roomId}` }, refresh)
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'players', filter: `room_id=eq.${roomId}` }, refresh)
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'notes', filter: `room_id=eq.${roomId}` }, refresh)
+          .subscribe();
+        document.getElementById('nicknameForm').addEventListener('submit', event => { event.preventDefault(); nickname = document.getElementById('nickname').value.trim(); if (!nickname) return; localStorage.setItem(`team-ready-name-${roomId}`, nickname); refresh(); });
+        document.getElementById('editNickname').addEventListener('click', () => { document.getElementById('nameSetup').classList.remove('hidden'); document.getElementById('participantReady').classList.add('hidden'); });
+        document.getElementById('participantDraw').addEventListener('click', async () => { if (!nickname) return; const result = await supabase.rpc('assign_team', { p_room_id: roomId, p_client_id: clientId, p_nickname: nickname }); if (result.error) participantConnection.textContent = result.error.message; await refresh(); });
+        document.getElementById('mobileNoteForm').addEventListener('submit', async event => { event.preventDefault(); const body = document.getElementById('mobileNote').value.trim(); if (!body) return; await supabase.from('notes').insert({ room_id: roomId, client_id: clientId, question: currentRoom.active_question ?? 0, body }); document.getElementById('mobileNote').value = ''; await refresh(); });
+        document.getElementById('questionMenu').addEventListener('click', async event => { const button = event.target.closest('[data-question]'); if (!button || isJoin) return; await supabase.from('rooms').update({ active_question: Number(button.dataset.question) }).eq('id', roomId); await refresh(); });
+      } catch (error) {
+        hostStatus.textContent = '实时服务连接失败，请检查 Supabase 配置'; participantStatus.textContent = '连接失败'; participantConnection.textContent = '请检查 Supabase 设置后重试';
+      }
+    }
+  </script>
+</body>
 </html>
