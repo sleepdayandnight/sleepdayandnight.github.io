@@ -69,6 +69,11 @@ create table if not exists public.task_claims (
   check (initiator_client_id <> verifier_client_id)
 );
 
+-- 同一个人同一个任务只能同时存在一张待核验卡，避免重复点按生成多张有效码。
+create unique index if not exists task_requests_pending_task_unique
+  on public.task_requests (room_id, initiator_client_id, task_index)
+  where status = 'pending';
+
 alter table public.rooms enable row level security;
 alter table public.players enable row level security;
 alter table public.notes enable row level security;
@@ -173,6 +178,8 @@ declare
   room_row rooms%rowtype;
   request_code text;
   expires_at_value timestamptz;
+  existing_request_code text;
+  existing_expires_at timestamptz;
 begin
   if p_task_index < 0 or p_task_index > 9 then raise exception 'Unknown task'; end if;
   select * into room_row from rooms where id = p_room_id;
@@ -183,12 +190,26 @@ begin
     raise exception 'Invalid participant credential';
   end if;
   if not exists (select 1 from players where room_id = p_room_id and client_id = p_client_id) then raise exception 'Participant not found'; end if;
+  -- 串行化同一房间的发码操作，确保随机码在并发情况下也不会重复。
+  perform pg_advisory_xact_lock(hashtext(p_room_id || ':task-requests'));
   if exists (select 1 from task_claims where room_id = p_room_id and initiator_client_id = p_client_id and task_index = p_task_index) then
     raise exception 'This task is already verified';
   end if;
+  select tr.request_code, tr.expires_at into existing_request_code, existing_expires_at
+  from task_requests as tr
+  where tr.room_id = p_room_id and tr.initiator_client_id = p_client_id and tr.task_index = p_task_index and tr.status = 'pending'
+  order by tr.created_at desc
+  limit 1;
+  if existing_request_code is not null then
+    if existing_expires_at <= now() then
+      update task_requests set status = 'expired' where task_requests.room_id = p_room_id and task_requests.request_code = existing_request_code and task_requests.status = 'pending';
+    else
+      return jsonb_build_object('request_code', existing_request_code, 'task_index', p_task_index, 'expires_at', existing_expires_at);
+    end if;
+  end if;
   loop
     request_code := lpad((floor(random() * 1000000))::integer::text, 6, '0');
-    exit when not exists (select 1 from task_requests tr where tr.room_id = p_room_id and tr.request_code = request_code and tr.status = 'pending');
+    exit when not exists (select 1 from task_requests tr where tr.room_id = p_room_id and tr.request_code = request_code);
   end loop;
   expires_at_value := least(room_row.mission_deadline, now() + interval '3 minutes');
   insert into task_requests (room_id, request_code, initiator_client_id, task_index, expires_at)
@@ -204,10 +225,15 @@ security definer
 set search_path = public
 as $$
 declare
+  room_row rooms%rowtype;
   request_row task_requests%rowtype;
   initiator_code_value text;
   verifier_code_value text;
 begin
+  select * into room_row from rooms where id = p_room_id;
+  if room_row.id is null or not room_row.mission_active or room_row.mission_deadline is null or room_row.mission_deadline <= now() then
+    raise exception 'Mission is not accepting verifications';
+  end if;
   if not exists (select 1 from participant_cards where room_id = p_room_id and client_id = p_verifier_client_id and token_hash = encode(digest(p_token, 'sha256'), 'hex')) then
     raise exception 'Invalid participant credential';
   end if;
@@ -238,11 +264,28 @@ begin
 end;
 $$;
 
+create or replace function public.reset_room(p_room_id text)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  delete from task_claims where room_id = p_room_id;
+  delete from task_requests where room_id = p_room_id;
+  delete from participant_cards where room_id = p_room_id;
+  delete from notes where room_id = p_room_id;
+  delete from players where room_id = p_room_id;
+  update rooms set active_question = 0, mission_active = false, mission_started_at = null, mission_deadline = null where id = p_room_id;
+end;
+$$;
+
 grant execute on function public.assign_team(text, text, text) to anon, authenticated;
 grant execute on function public.like_note(uuid, text) to anon, authenticated;
 grant execute on function public.ensure_participant_card(text, text, text) to anon, authenticated;
 grant execute on function public.create_task_request(text, text, text, integer) to anon, authenticated;
 grant execute on function public.confirm_task_request(text, text, text, text) to anon, authenticated;
+grant execute on function public.reset_room(text) to anon, authenticated;
 
 do $$
 begin

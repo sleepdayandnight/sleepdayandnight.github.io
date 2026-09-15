@@ -289,6 +289,9 @@
     .mobile-task { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; border: 3px solid var(--ink); background: var(--paper); padding: 10px; font-weight: 900; }
     .mobile-task.done { background: var(--mint); }
     .mobile-task small { display: block; margin-top: 4px; font-size: 10px; opacity: .8; }
+    .task-verify-inline { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; margin-top: 8px; }
+    .task-verify-inline input { min-height: 36px; padding: 7px; font-size: 12px; }
+    .task-verify-inline button { min-height: 36px; }
     .verify-box { margin-top: 16px; border: 3px solid var(--ink); background: var(--red); padding: 13px; }
     .verify-box h3 { margin-bottom: 5px; }
     .verify-box p { font-size: 12px; font-weight: 900; line-height: 1.45; }
@@ -411,7 +414,7 @@
       </article>
       <section class="mission-console" id="missionConsole" aria-live="polite">
         <div class="mission-console-head"><div><span class="eyebrow">手机端任务核验</span><h3>双端确认 · 实时计分</h3></div><div class="timer"><span id="missionClock">15:00</span></div></div>
-        <div class="controls"><button class="button primary" id="startMission" type="button"><i data-lucide="timer" aria-hidden="true"></i>开始 15 分钟</button><button class="button black" id="stopMission" type="button" disabled><i data-lucide="square" aria-hidden="true"></i>截止提交</button><span class="mission-status" id="missionStatus">尚未开始</span></div>
+        <div class="controls"><button class="button primary" id="startMission" type="button"><i data-lucide="timer" aria-hidden="true"></i>开始 15 分钟</button><button class="button black" id="stopMission" type="button" disabled><i data-lucide="square" aria-hidden="true"></i>截止提交</button><button class="button yellow" id="resetRoom" type="button"><i data-lucide="rotate-ccw" aria-hidden="true"></i>一键清空本场</button><span class="mission-status" id="missionStatus">尚未开始</span></div>
         <div class="mission-score-grid" id="missionTeamTotals"></div>
         <div class="mission-leaderboard"><h4>个人完成前三名</h4><div class="mission-leader-list" id="missionLeaderboard"><div class="mission-leader">等待任务核验结果</div></div></div>
       </section>
@@ -465,7 +468,7 @@
           <p>完成任务后点击“发起核验”，让伙伴输入你手机上的一次性验证码；伙伴确认后才会计入成绩。</p>
           <div class="mobile-mission-status" id="mobileMissionStatus">等待主持人开始 15 分钟任务</div>
           <div class="mobile-task-list" id="mobileTaskList"></div>
-          <div class="verify-box"><h3>确认伙伴的任务</h3><p>伙伴展示验证码后，在这里输入 6 位数字完成确认。</p><form id="verifyTaskForm"><label class="field" for="verifyCode">一次性核验码<input id="verifyCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="例如 260318" required></label><button class="button yellow" type="submit">确认完成</button></form></div>
+          <div class="verify-box"><h3>逐项确认伙伴任务</h3><p>每项任务下都有独立验证码输入框。伙伴告诉你完成的是哪一项后，把验证码填入对应任务；确认成功后该项会锁定，不能重复计分。</p></div>
           <div class="verification-ticket hidden" id="verificationTicket"><span>请把这个核验码给伙伴</span><strong id="verificationCode">------</strong><small id="verificationTaskLabel">有效期 3 分钟 · 只能使用一次</small></div>
         </section>
         <section class="participant-section" id="participantNotes">
@@ -608,8 +611,20 @@
     const participantConnection = document.getElementById('participantConnection');
     if (!config?.url || !config?.anonKey) {
       hostStatus.textContent = '演示模式：填入 Supabase 配置后开启手机实时连接';
-      participantStatus.textContent = '尚未连接';
-      participantConnection.textContent = '该演示页需要 Supabase 配置后才能参与活动';
+      participantStatus.textContent = '演示模式';
+      participantConnection.textContent = isJoin ? '演示模式：可本机抽色；跨手机核验需上传 supabase-config.js' : '填入 Supabase 配置后开启手机实时连接';
+      if (isJoin) {
+        const demoId = localStorage.getItem('team-ready-client-id') || `demo-${Math.random().toString(36).slice(2, 10)}`;
+        localStorage.setItem('team-ready-client-id', demoId);
+        const demoCode = `D${demoId.replace(/[^a-z0-9]/gi, '').toUpperCase().slice(-5).padStart(5, '0')}`;
+        let demoTeam = Number(localStorage.getItem(`team-ready-demo-team-${roomId}`));
+        const demoName = document.getElementById('nickname');
+        const showDemoReady = () => { const name = demoName.value.trim(); if (!name) return; nickname = name; localStorage.setItem(`team-ready-name-${roomId}`, nickname); document.getElementById('nameSetup').classList.add('hidden'); document.getElementById('participantReady').classList.remove('hidden'); };
+        document.getElementById('nicknameForm').addEventListener('submit', event => { event.preventDefault(); showDemoReady(); });
+        document.getElementById('editNickname').addEventListener('click', () => { document.getElementById('nameSetup').classList.remove('hidden'); document.getElementById('participantReady').classList.add('hidden'); });
+        document.getElementById('participantDraw').addEventListener('click', () => { if (!nickname) return; if (!Number.isInteger(demoTeam) || demoTeam < 0 || demoTeam > 4) { demoTeam = Math.floor(Math.random() * groups.length); localStorage.setItem(`team-ready-demo-team-${roomId}`, String(demoTeam)); } const group = groups[demoTeam]; const result = document.getElementById('participantTeam'); result.style.background = group.color; result.innerHTML = `${group.name}<small>演示抽色结果</small>`; document.getElementById('participantDraw').disabled = true; document.getElementById('participantDraw').textContent = '已完成抽色'; document.getElementById('participantIdentityCode').textContent = `#${demoCode}`; document.getElementById('participantIdentityTeam').textContent = `${group.name} · 演示身份编号`; document.getElementById('participantCardCode').textContent = demoCode; const link = new URL(location.href); link.searchParams.set('card', demoCode); const identityLink = document.getElementById('identityLink'); identityLink.textContent = link.href; identityLink.dataset.url = link.href; document.getElementById('mobileMissionStatus').textContent = '演示模式未连接实时核验；上传配置后即可双端确认'; document.getElementById('mobileTaskList').innerHTML = '<div class="mobile-mission-status">请先在 GitHub 更新 supabase-config.js，再使用手机任务核验</div>'; });
+        if (nickname) { demoName.value = nickname; showDemoReady(); }
+      }
     } else {
       document.body.classList.add('live-connected');
       const supabase = createClient(config.url, config.anonKey);
@@ -698,7 +713,8 @@
         if (!hasIdentity) { taskList.innerHTML = '<div class="mobile-mission-status">请先抽取颜色，系统会生成你的身份卡</div>'; return; }
         taskList.innerHTML = missionTasks.map((task, index) => {
           const done = mine.some(claim => Number(claim.task_index) === index);
-          return `<article class="mobile-task ${done ? 'done' : ''}"><div>${index + 1}. ${safe(task)}<small>${done ? '已完成双端核验' : '需要一位伙伴确认'}</small></div><button class="button small ${done ? '' : 'yellow'}" data-start-task="${index}" type="button" ${done || !missionIsOpen() ? 'disabled' : ''}>${done ? '已完成' : '发起核验'}</button></article>`;
+          const verifierInput = done ? '<small>该任务已锁定，不再重复计分</small>' : `<div class="task-verify-inline"><input data-verify-input="${index}" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="伙伴验证码"><button class="button small" data-confirm-task="${index}" type="button">确认</button></div>`;
+          return `<article class="mobile-task ${done ? 'done' : ''}"><div>${index + 1}. ${safe(task)}<small>${done ? '已完成双端核验' : '先让伙伴确认，再在此输入验证码'}</small>${verifierInput}</div><button class="button small ${done ? '' : 'yellow'}" data-start-task="${index}" type="button" ${done || !missionIsOpen() ? 'disabled' : ''}>${done ? '已完成' : '发起核验'}</button></article>`;
         }).join('');
       }
 
@@ -713,6 +729,8 @@
           const group = groups[player.team]; const result = document.getElementById('participantTeam');
           result.style.background = group.color; result.innerHTML = `${group.name}<small>请按颜色找到你的队友</small>`;
           document.getElementById('participantDraw').disabled = true; document.getElementById('participantDraw').textContent = '已完成抽色';
+        } else {
+          document.getElementById('participantDraw').disabled = false; document.getElementById('participantDraw').textContent = '抽取我的颜色';
         }
         const list = notes.filter(note => note.question === question).sort((a, b) => Number(b.likes || 0) - Number(a.likes || 0));
         document.getElementById('mobileNotes').innerHTML = list.map(note => `<article class="participant-note"><p>${safe(note.body)}</p><button class="like" data-note-id="${note.id}"><i data-lucide="thumbs-up" aria-hidden="true"></i> 点赞 ${Number(note.likes || 0)}</button></article>`).join('');
@@ -732,6 +750,7 @@
         renderHost(playersResult.data || [], notesResult.data || []);
         renderMissionHost(playersResult.data || [], claimsResult.data || []);
         const currentPlayer = (playersResult.data || []).find(item => item.client_id === clientId);
+        if (isJoin && !currentPlayer) { cardCode = ''; pendingRequest = null; document.getElementById('verificationTicket').classList.add('hidden'); }
         if (isJoin && currentPlayer && nickname && !cardCode) { try { await ensureCard(); } catch (error) { participantConnection.textContent = error.message; } }
         renderParticipant(playersResult.data || [], notesResult.data || [], claimsResult.data || []);
       }
@@ -754,9 +773,10 @@
         document.getElementById('questionMenu').addEventListener('click', async event => { const button = event.target.closest('[data-question]'); if (!button || isJoin) return; await supabase.from('rooms').update({ active_question: Number(button.dataset.question) }).eq('id', roomId); await refresh(); });
         document.getElementById('startMission').addEventListener('click', async () => { const started = new Date(); const deadline = new Date(started.getTime() + 15 * 60 * 1000); const result = await supabase.from('rooms').update({ mission_active: true, mission_started_at: started.toISOString(), mission_deadline: deadline.toISOString() }).eq('id', roomId); if (result.error) { document.getElementById('missionStatus').textContent = `开始失败：${result.error.message}`; return; } await refresh(); });
         document.getElementById('stopMission').addEventListener('click', async () => { const result = await supabase.from('rooms').update({ mission_active: false }).eq('id', roomId); if (result.error) { document.getElementById('missionStatus').textContent = `截止失败：${result.error.message}`; return; } await refresh(); });
+        document.getElementById('resetRoom').addEventListener('click', async () => { if (!window.confirm('确定清空本场的队伍、便签、身份卡和任务成绩吗？此操作不可撤销。')) return; const result = await supabase.rpc('reset_room', { p_room_id: roomId }); if (result.error) { document.getElementById('missionStatus').textContent = `清空失败：${result.error.message}`; return; } localStorage.removeItem('team-ready-room'); document.getElementById('missionStatus').textContent = '本场已清空，可重新开始'; await refresh(); });
         document.getElementById('copyIdentityLink').addEventListener('click', async event => { const url = document.getElementById('identityLink').dataset.url; if (!url) return; try { await navigator.clipboard.writeText(url); event.currentTarget.textContent = '已复制'; setTimeout(() => { event.currentTarget.textContent = '复制链接'; }, 1400); } catch { event.currentTarget.textContent = '请长按复制'; } });
         document.getElementById('mobileTaskList').addEventListener('click', async event => { const button = event.target.closest('[data-start-task]'); if (!button || button.disabled) return; try { await ensureCard(); const taskIndex = Number(button.dataset.startTask); const result = await supabase.rpc('create_task_request', { p_room_id: roomId, p_client_id: clientId, p_token: cardToken, p_task_index: taskIndex }); if (result.error) throw result.error; pendingRequest = result.data; document.getElementById('verificationCode').textContent = pendingRequest.request_code; document.getElementById('verificationTaskLabel').textContent = `任务 ${taskIndex + 1}：${missionTasks[taskIndex]} · 有效期 3 分钟 · 只能使用一次`; document.getElementById('verificationTicket').classList.remove('hidden'); document.getElementById('mobileMissionStatus').textContent = '请把验证码展示给完成任务的伙伴，由对方确认'; } catch (error) { document.getElementById('mobileMissionStatus').textContent = error.message || '暂时无法生成核验码'; } });
-        document.getElementById('verifyTaskForm').addEventListener('submit', async event => { event.preventDefault(); const code = document.getElementById('verifyCode').value.trim(); if (!/^\d{6}$/.test(code)) return; try { await ensureCard(); const result = await supabase.rpc('confirm_task_request', { p_room_id: roomId, p_verifier_client_id: clientId, p_token: cardToken, p_request_code: code }); if (result.error) throw result.error; document.getElementById('verifyCode').value = ''; document.getElementById('verificationTicket').classList.add('hidden'); document.getElementById('mobileMissionStatus').textContent = `已确认任务 ${Number(result.data.task_index) + 1}，成绩已实时提交`; await refresh(); } catch (error) { document.getElementById('mobileMissionStatus').textContent = error.message || '核验失败，请检查验证码'; } });
+        document.getElementById('mobileTaskList').addEventListener('click', async event => { const button = event.target.closest('[data-confirm-task]'); if (!button || button.disabled) return; const taskIndex = Number(button.dataset.confirmTask); const input = document.querySelector(`[data-verify-input="${taskIndex}"]`); const code = input?.value.trim() || ''; if (!/^\d{6}$/.test(code)) { document.getElementById('mobileMissionStatus').textContent = '请输入对应任务的 6 位验证码'; return; } button.disabled = true; try { await ensureCard(); const result = await supabase.rpc('confirm_task_request', { p_room_id: roomId, p_verifier_client_id: clientId, p_token: cardToken, p_request_code: code }); if (result.error) throw result.error; document.getElementById('mobileMissionStatus').textContent = `已确认任务 ${Number(result.data.task_index) + 1}，成绩已实时提交`; await refresh(); } catch (error) { button.disabled = false; document.getElementById('mobileMissionStatus').textContent = error.message || '核验失败，请检查验证码'; } });
       } catch (error) {
         hostStatus.textContent = '实时服务连接失败，请检查 Supabase 配置'; participantStatus.textContent = '连接失败'; participantConnection.textContent = '请检查 Supabase 设置后重试';
       }
