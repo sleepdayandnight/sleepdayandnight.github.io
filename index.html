@@ -178,6 +178,20 @@
     .task:nth-last-child(-n+2) { border-bottom: 0; }
     .signature { border: 2px dashed var(--ink); align-self: end; min-height: 33px; font-size: 11px; padding: 7px 4px; }
     .safety { border: 3px solid var(--ink); background: var(--yellow); padding: 10px; font-size: 12px; font-weight: 900; }
+    .mission-console { max-width: 940px; margin: 24px auto 0; border: 4px solid var(--ink); background: var(--teal); padding: clamp(17px, 3vw, 28px); box-shadow: var(--shadow); }
+    .mission-console-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+    .mission-console h3 { margin: 12px 0 0; font-size: clamp(26px, 4vw, 42px); }
+    .mission-console .timer { background: var(--yellow); }
+    .mission-status { border: 3px solid var(--ink); background: var(--paper); padding: 9px 11px; font-size: 12px; font-weight: 900; }
+    .mission-score-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+    .mission-score { border: 3px solid var(--ink); background: var(--paper); padding: 10px; font-weight: 900; }
+    .mission-score strong { display: block; margin-top: 7px; font: 900 30px var(--font-display); }
+    .mission-leaderboard { margin-top: 18px; border: 3px solid var(--ink); background: var(--paper); padding: 13px; }
+    .mission-leaderboard h4 { margin: 0 0 9px; font: 900 24px var(--font-display); }
+    .mission-leader-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .mission-leader { border: 2px solid var(--ink); padding: 9px; font-weight: 900; background: var(--yellow); }
+    .mission-leader:nth-child(2) { background: var(--red); }
+    .mission-leader:nth-child(3) { background: var(--mint); }
 
     .photo-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: 19px; }
     .photo-ref { position: relative; background: var(--ink); min-height: 380px; overflow: hidden; }
@@ -235,6 +249,9 @@
       .paper-head { grid-template-columns: 1fr; }
       .sticky-stage { min-height: 0; }
       .bottom-nav { flex-wrap: wrap; }
+      .mission-console-head, .identity-card { grid-template-columns: 1fr; display: grid; }
+      .mission-score-grid, .mission-leader-list { grid-template-columns: 1fr; }
+      .identity-link-row, .verify-box form { grid-template-columns: 1fr; }
     }
     @media print {
       body { background: #fff; }
@@ -261,6 +278,24 @@
     .participant-note { border: 3px solid var(--ink); background: var(--mint); padding: 12px; font-weight: 900; }
     .participant-note p { margin-bottom: 10px; }
     .participant-note button { min-height: 38px; }
+    .identity-card { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; border: 4px solid var(--ink); background: var(--yellow); padding: 14px; box-shadow: 5px 5px 0 var(--ink); }
+    .identity-card h2 { margin: 10px 0 4px; font-size: 47px; }
+    .identity-card p { margin: 0; font-size: 12px; }
+    .identity-code { border: 4px solid var(--ink); background: var(--paper); padding: 12px; font: 900 30px var(--font-display); letter-spacing: 3px; }
+    .identity-link-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 12px; align-items: center; }
+    .identity-link { border: 3px dashed var(--ink); background: var(--paper); padding: 8px; font-size: 11px; word-break: break-all; font-weight: 900; }
+    .mobile-mission-status { border: 3px solid var(--ink); background: var(--mint); padding: 9px; font-size: 12px; font-weight: 900; }
+    .mobile-task-list { display: grid; gap: 9px; margin-top: 13px; }
+    .mobile-task { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; border: 3px solid var(--ink); background: var(--paper); padding: 10px; font-weight: 900; }
+    .mobile-task.done { background: var(--mint); }
+    .mobile-task small { display: block; margin-top: 4px; font-size: 10px; opacity: .8; }
+    .verify-box { margin-top: 16px; border: 3px solid var(--ink); background: var(--red); padding: 13px; }
+    .verify-box h3 { margin-bottom: 5px; }
+    .verify-box p { font-size: 12px; font-weight: 900; line-height: 1.45; }
+    .verify-box form { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; }
+    .verification-ticket { margin-top: 13px; border: 3px solid var(--ink); background: var(--yellow); padding: 12px; font-weight: 900; }
+    .verification-ticket strong { display: block; font: 900 42px var(--font-display); letter-spacing: 5px; margin-top: 6px; }
+    .verification-ticket small { display: block; margin-top: 5px; }
     .realtime-status { margin-top: 12px; border: 3px solid var(--ink); padding: 8px 10px; background: var(--paper); font-size: 12px; font-weight: 900; }
     .live-connected #demoDraw, .live-connected #drawTeams, .live-connected .join-sample, .live-connected #sampleNotes, .live-connected #noteForm { display: none; }
   </style>
@@ -314,17 +349,7 @@
       <div class="split">
         <div class="panel teal">
           <div class="qr-layout">
-            <div class="qr" id="joinQr" aria-label="参与端二维码示意">
-              <b class="finder"></b><b></b><b></b><b></b><b></b><b></b><b class="finder"></b><b></b><b></b>
-              <b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b>
-              <b></b><b></b><b class="finder"></b><b></b><b></b><b></b><b></b><b></b><b></b>
-              <b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b>
-              <b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b>
-              <b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b>
-              <b class="finder"></b><b></b><b></b><b></b><b></b><b></b><b class="finder"></b><b></b><b></b>
-              <b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b>
-              <b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b>
-            </div>
+            <div class="qr" id="joinQr" aria-label="参与端二维码示意"><img src="assets/join-qr.png" alt="扫码进入手机参与端"></div>
             <div class="qr-copy"><h3>抽取你的队伍颜色</h3><p>扫码后填写昵称，再点击抽色。每种颜色限 6 人，系统会在空位最多的颜色中随机分配。</p><span class="qr-link" id="joinUrl">准备参与端链接</span><div class="realtime-status" id="realtimeStatus">等待实时服务连接</div></div>
           </div>
           <div class="team-stats" id="teamStats" aria-live="polite"></div>
@@ -371,9 +396,9 @@
     </section>
 
     <section class="view" id="mission">
-      <div class="page-header"><div><h2 class="section-title">请问可以吗？</h2><div class="section-kicker">互动任务表</div><p>每位同学拿一张任务表，在 15 分钟内尽可能完成更多任务。每项任务需要寻找不同伙伴签名。</p></div><div class="page-number">04</div></div>
+      <div class="page-header"><div><h2 class="section-title">请问可不可以</h2><div class="section-kicker">互动任务表</div><p>每位同学拿一张任务表，在 15 分钟内尽可能完成更多任务。每项任务需要寻找不同伙伴签名。</p></div><div class="page-number">04</div></div>
       <article class="paper">
-        <div class="paper-head"><div><h2>请问可以吗？</h2><p>15 分钟互动任务表</p></div><div class="meta"><span>姓名：____________</span><span>年级：____________</span></div></div>
+        <div class="paper-head"><div><h2>请问可不可以</h2><p>15 分钟互动任务表</p></div><div class="meta"><span>姓名：____________</span><span>年级：____________</span></div></div>
         <p class="mission-intro">请在 15 分钟内尽可能多地完成任务，并邀请伙伴签名。一个伙伴只能协助完成一项任务。</p>
         <div class="task-grid">
           <div class="task"><span>和在场一个人手拉手转圈圈</span><span class="signature">伙伴签名</span></div><div class="task"><span>邀请一个人，互相模仿夸张的动作</span><span class="signature">伙伴签名</span></div>
@@ -384,13 +409,19 @@
         </div>
         <div class="safety">参与以双方自愿、舒适和安全为前提；任何互动均可礼貌跳过或换成其他任务。</div>
       </article>
+      <section class="mission-console" id="missionConsole" aria-live="polite">
+        <div class="mission-console-head"><div><span class="eyebrow">手机端任务核验</span><h3>双端确认 · 实时计分</h3></div><div class="timer"><span id="missionClock">15:00</span></div></div>
+        <div class="controls"><button class="button primary" id="startMission" type="button"><i data-lucide="timer" aria-hidden="true"></i>开始 15 分钟</button><button class="button black" id="stopMission" type="button" disabled><i data-lucide="square" aria-hidden="true"></i>截止提交</button><span class="mission-status" id="missionStatus">尚未开始</span></div>
+        <div class="mission-score-grid" id="missionTeamTotals"></div>
+        <div class="mission-leaderboard"><h4>个人完成前三名</h4><div class="mission-leader-list" id="missionLeaderboard"><div class="mission-leader">等待任务核验结果</div></div></div>
+      </section>
       <div class="bottom-nav"><button class="button yellow" onclick="window.print()"><i data-lucide="printer" aria-hidden="true"></i>打印任务表</button><span></span><button class="button secondary" data-next>大学之最<i data-lucide="arrow-right" aria-hidden="true"></i></button></div>
     </section>
 
     <section class="view" id="photo">
       <div class="page-header"><div><h2 class="section-title">姿势重构</h2><div class="section-kicker">默契大挑战</div><p>每轮放出一张参考图，小组在 30 秒内协作摆出类似造型，拍照后一起展示。</p></div><div class="page-number">05</div></div>
       <div class="photo-layout">
-        <figure class="photo-ref"><img id="poseImage" src="assets/photos/pose-01.jpg" alt="姿势重构参考照片"><figcaption class="photo-badge" id="poseCaption">本轮参考图 / 01</figcaption></figure>
+        <figure class="photo-ref"><img id="poseImage" src="assets/photos/pose-02.jpg" alt="姿势重构参考照片"><figcaption class="photo-badge" id="poseCaption">本轮参考图 / 01</figcaption></figure>
         <aside class="panel mint"><h3>全队一起复刻</h3><ul class="checklist"><li>全员都要进入画面</li><li>动作量力而行，拒绝危险动作</li><li>比拼创意与还原度</li></ul><div class="photo-timer" id="photoTimer">00:30</div><div class="controls"><button class="button black" id="startPhoto"><i data-lucide="timer" aria-hidden="true"></i>开始 30 秒</button><button class="button yellow" id="nextPose"><i data-lucide="refresh-cw" aria-hidden="true"></i>换一张</button></div></aside>
       </div>
       <div class="bottom-nav"><button class="button" data-prev><i data-lucide="arrow-left" aria-hidden="true"></i>上一页</button><button class="button secondary" data-next>大学之最<i data-lucide="arrow-right" aria-hidden="true"></i></button></div>
@@ -425,6 +456,18 @@
         <p>点击后随机加入一支队伍。每种颜色刚好 6 人。</p>
         <div class="participant-result" id="participantTeam">等待抽色</div>
         <div class="controls"><button class="button black" id="participantDraw" type="button"><i data-lucide="shuffle" aria-hidden="true"></i>抽取我的颜色</button><button class="button small" id="editNickname" type="button">修改昵称</button></div>
+        <section class="participant-section" id="participantIdentity">
+          <div class="identity-card"><div><span class="eyebrow">我的活动身份卡</span><h2 id="participantIdentityCode">未生成</h2><p id="participantIdentityTeam">抽色后生成匿名身份编号</p></div><div class="identity-code" id="participantCardCode">------</div></div>
+          <div class="identity-link-row"><div class="identity-link" id="identityLink">抽色后生成专属身份链接</div><button class="button small" id="copyIdentityLink" type="button">复制链接</button></div>
+        </section>
+        <section class="participant-section" id="participantMissions">
+          <h2>任务核验</h2>
+          <p>完成任务后点击“发起核验”，让伙伴输入你手机上的一次性验证码；伙伴确认后才会计入成绩。</p>
+          <div class="mobile-mission-status" id="mobileMissionStatus">等待主持人开始 15 分钟任务</div>
+          <div class="mobile-task-list" id="mobileTaskList"></div>
+          <div class="verify-box"><h3>确认伙伴的任务</h3><p>伙伴展示验证码后，在这里输入 6 位数字完成确认。</p><form id="verifyTaskForm"><label class="field" for="verifyCode">一次性核验码<input id="verifyCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="例如 260318" required></label><button class="button yellow" type="submit">确认完成</button></form></div>
+          <div class="verification-ticket hidden" id="verificationTicket"><span>请把这个核验码给伙伴</span><strong id="verificationCode">------</strong><small id="verificationTaskLabel">有效期 3 分钟 · 只能使用一次</small></div>
+        </section>
         <section class="participant-section" id="participantNotes">
           <h2 id="mobileQuestion">大学之最</h2>
           <form id="mobileNoteForm" class="field"><label for="mobileNote">写下你的答案</label><textarea id="mobileNote" maxlength="60" placeholder="用一句话留下你的回答"></textarea><button class="button secondary" type="submit"><i data-lucide="send" aria-hidden="true"></i>放入待贴区</button></form>
@@ -512,7 +555,7 @@
     document.getElementById('nextNumber').addEventListener('click', () => { numberIndex = Math.min(numberIndex + 1, numberRounds.length - 1); numberStage.textContent = '准备报数'; numberStage.style.background = 'var(--yellow)'; });
 
     let photoInterval;
-    const poseImages = Array.from({ length: 10 }, (_, index) => `assets/photos/pose-${String(index + 1).padStart(2, '0')}.jpg`);
+    const poseImages = Array.from({ length: 9 }, (_, index) => `assets/photos/pose-${String(index + 2).padStart(2, '0')}.jpg`);
     let poseIndex = 0;
     document.getElementById('nextPose').addEventListener('click', () => {
       poseIndex = (poseIndex + 1) % poseImages.length;
@@ -547,16 +590,17 @@
     const settings = new URLSearchParams(location.search);
     const isJoin = settings.get('mode') === 'join';
     const newRoomId = () => `room-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
-    const roomId = settings.get('room') || (isJoin ? 'team-ready-2026' : localStorage.getItem('team-ready-room') || newRoomId());
+    const roomId = settings.get('room') || (isJoin ? 'team-ready-2026' : localStorage.getItem('team-ready-room') || 'team-ready-2026');
     if (!isJoin && !settings.get('room')) localStorage.setItem('team-ready-room', roomId);
     const rootUrl = new URL(location.href); rootUrl.search = ''; rootUrl.hash = '';
     const joinUrl = new URL(rootUrl.href); joinUrl.searchParams.set('mode', 'join'); joinUrl.searchParams.set('room', roomId);
     const safe = value => String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
     const groups = [{ name: '红色信号', color: '#ff6b6b' }, { name: '青绿连接', color: '#4ecdc4' }, { name: '明黄终端', color: '#ffe66d' }, { name: '薄荷防线', color: '#95e1d3' }, { name: '蓝色链路', color: '#86b7fe' }];
     const questionsLive = ['大学之后我最想吐槽的事', '大学之后我最想夸夸的是', '大学之后我最想做的事', '进入大学之后我担心的事情', '进入大学之后变化最大的是'];
+    const missionTasks = ['和在场一个人手拉手转圈圈', '邀请一个人，互相模仿夸张的动作', '当面真诚地夸赞一个人', '帮一个人捶肩', '和一个人进行掰手腕', '和一个人对视超过 10 秒，保持不笑', '教一个人唱歌，对方至少跟唱两句', '把对方介绍给第三个人', '对一个人比心', '和一个人石头剪刀布'];
     document.body.classList.toggle('join-mode', isJoin);
     document.getElementById('joinUrl').textContent = joinUrl.href;
-    document.getElementById('joinQr').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(joinUrl.href)}" alt="扫码进入参与端" width="160" height="160">`;
+    document.getElementById('joinQr').innerHTML = `<img src="assets/join-qr.png" alt="扫码进入参与端" width="160" height="160">`;
 
     const config = window.TEAM_READY_SUPABASE_CONFIG;
     const hostStatus = document.getElementById('realtimeStatus');
@@ -574,6 +618,50 @@
       localStorage.setItem('team-ready-client-id', clientId);
       let nickname = localStorage.getItem(`team-ready-name-${roomId}`) || '';
       let currentRoom = { active_question: 0 };
+      let cardToken = localStorage.getItem(`team-ready-card-token-${roomId}`) || '';
+      let cardCode = '';
+      let pendingRequest = null;
+      let missionTimerInterval = null;
+
+      const makeCardToken = () => { const seed = globalThis.crypto?.randomUUID?.() || `card-${Date.now().toString(36)}`; return seed.replaceAll('-', '') + Math.random().toString(36).slice(2); };
+      const formatClock = seconds => `${String(Math.floor(Math.max(0, seconds) / 60)).padStart(2, '0')}:${String(Math.max(0, seconds) % 60).padStart(2, '0')}`;
+      const missionIsOpen = () => Boolean(currentRoom.mission_active && currentRoom.mission_deadline && new Date(currentRoom.mission_deadline).getTime() > Date.now());
+
+      async function ensureCard() {
+        if (!isJoin || !nickname) return '';
+        if (!cardToken) { cardToken = makeCardToken(); localStorage.setItem(`team-ready-card-token-${roomId}`, cardToken); }
+        if (cardCode) return cardCode;
+        const result = await supabase.rpc('ensure_participant_card', { p_room_id: roomId, p_client_id: clientId, p_token: cardToken });
+        if (result.error) throw result.error;
+        cardCode = String(result.data || '');
+        return cardCode;
+      }
+
+      function updateMissionTimer() {
+        const clock = document.getElementById('missionClock');
+        const status = document.getElementById('missionStatus');
+        const mobileStatus = document.getElementById('mobileMissionStatus');
+        const deadline = currentRoom.mission_deadline ? new Date(currentRoom.mission_deadline).getTime() : 0;
+        const left = deadline ? Math.ceil((deadline - Date.now()) / 1000) : 900;
+        if (clock) clock.textContent = formatClock(left);
+        const open = missionIsOpen();
+        if (status) status.textContent = open ? '进行中 · 手机端可提交核验' : (currentRoom.mission_deadline ? '本轮已截止' : '尚未开始');
+        if (mobileStatus) mobileStatus.textContent = open ? `任务进行中 · 剩余 ${formatClock(left)} · 完成后找伙伴确认` : (currentRoom.mission_deadline ? '本轮已截止，等待下一次开始' : '等待主持人开始 15 分钟任务');
+        const start = document.getElementById('startMission'); const stop = document.getElementById('stopMission');
+        if (start) start.disabled = open;
+        if (stop) stop.disabled = !open;
+      }
+
+      function renderMissionHost(players, claims) {
+        const totals = groups.map((group, team) => claims.filter(claim => players.some(player => player.client_id === claim.initiator_client_id && player.team === team)).length);
+        const totalsEl = document.getElementById('missionTeamTotals');
+        if (totalsEl) totalsEl.innerHTML = groups.map((group, index) => `<div class="mission-score" style="background:${group.color}">${String(index + 1).padStart(2, '0')} 队 / ${group.name}<strong>${totals[index]} 项</strong></div>`).join('');
+        const leaders = Object.values(claims.reduce((map, claim) => { const key = claim.initiator_client_id; map[key] ||= { code: claim.initiator_code || '匿名', count: 0 }; map[key].count += 1; return map; }, {})).sort((a, b) => b.count - a.count).slice(0, 3);
+        const leaderEl = document.getElementById('missionLeaderboard');
+        if (leaderEl) leaderEl.innerHTML = leaders.length ? leaders.map((leader, index) => `<div class="mission-leader">${index + 1}. ${safe(leader.code)}<br><strong>${leader.count} 项</strong></div>`).join('') : '<div class="mission-leader">等待任务核验结果</div>';
+        updateMissionTimer();
+        if (!missionTimerInterval) missionTimerInterval = setInterval(updateMissionTimer, 1000);
+      }
 
       function renderHost(players, notes) {
         const counts = groups.map((group, index) => players.filter(player => player.team === index).length);
@@ -589,7 +677,32 @@
         if (window.lucide) lucide.createIcons();
       }
 
-      function renderParticipant(players, notes) {
+      function renderParticipantMissions(player, claims) {
+        if (!isJoin) return;
+        const identityCode = document.getElementById('participantIdentityCode');
+        const identityTeam = document.getElementById('participantIdentityTeam');
+        const cardCodeEl = document.getElementById('participantCardCode');
+        const identityLinkEl = document.getElementById('identityLink');
+        const hasIdentity = Boolean(player && cardCode);
+        if (identityCode) identityCode.textContent = hasIdentity ? `#${cardCode}` : '未生成';
+        if (identityTeam) identityTeam.textContent = hasIdentity ? `${groups[player.team].name} · 仅用于本场活动核验` : '抽色后生成匿名身份编号';
+        if (cardCodeEl) cardCodeEl.textContent = hasIdentity ? cardCode : '------';
+        if (identityLinkEl) {
+          if (hasIdentity) {
+            const cardUrl = new URL(joinUrl.href); cardUrl.searchParams.set('card', cardCode); identityLinkEl.textContent = cardUrl.href; identityLinkEl.dataset.url = cardUrl.href;
+          } else { identityLinkEl.textContent = '抽色后生成专属身份链接'; delete identityLinkEl.dataset.url; }
+        }
+        const mine = claims.filter(claim => claim.initiator_client_id === clientId);
+        const taskList = document.getElementById('mobileTaskList');
+        if (!taskList) return;
+        if (!hasIdentity) { taskList.innerHTML = '<div class="mobile-mission-status">请先抽取颜色，系统会生成你的身份卡</div>'; return; }
+        taskList.innerHTML = missionTasks.map((task, index) => {
+          const done = mine.some(claim => Number(claim.task_index) === index);
+          return `<article class="mobile-task ${done ? 'done' : ''}"><div>${index + 1}. ${safe(task)}<small>${done ? '已完成双端核验' : '需要一位伙伴确认'}</small></div><button class="button small ${done ? '' : 'yellow'}" data-start-task="${index}" type="button" ${done || !missionIsOpen() ? 'disabled' : ''}>${done ? '已完成' : '发起核验'}</button></article>`;
+        }).join('');
+      }
+
+      function renderParticipant(players, notes, claims) {
         if (!isJoin) return;
         const player = players.find(item => item.client_id === clientId);
         const question = currentRoom.active_question ?? 0;
@@ -604,18 +717,23 @@
         const list = notes.filter(note => note.question === question).sort((a, b) => Number(b.likes || 0) - Number(a.likes || 0));
         document.getElementById('mobileNotes').innerHTML = list.map(note => `<article class="participant-note"><p>${safe(note.body)}</p><button class="like" data-note-id="${note.id}"><i data-lucide="thumbs-up" aria-hidden="true"></i> 点赞 ${Number(note.likes || 0)}</button></article>`).join('');
         document.querySelectorAll('[data-note-id]').forEach(button => button.addEventListener('click', async () => { await supabase.rpc('like_note', { p_note_id: button.dataset.noteId, p_client_id: clientId }); }));
+        renderParticipantMissions(player, claims);
         if (window.lucide) lucide.createIcons();
       }
 
       async function refresh() {
-        const [roomResult, playersResult, notesResult] = await Promise.all([
+        const [roomResult, playersResult, notesResult, claimsResult] = await Promise.all([
           supabase.from('rooms').select('*').eq('id', roomId).maybeSingle(),
           supabase.from('players').select('client_id, team').eq('room_id', roomId),
-          supabase.from('notes').select('id, question, body, likes, created_at').eq('room_id', roomId)
+          supabase.from('notes').select('id, question, body, likes, created_at').eq('room_id', roomId),
+          supabase.from('task_claims').select('task_index, initiator_client_id, verifier_client_id, initiator_code, verifier_code, created_at').eq('room_id', roomId)
         ]);
         currentRoom = roomResult.data || { active_question: 0 };
         renderHost(playersResult.data || [], notesResult.data || []);
-        renderParticipant(playersResult.data || [], notesResult.data || []);
+        renderMissionHost(playersResult.data || [], claimsResult.data || []);
+        const currentPlayer = (playersResult.data || []).find(item => item.client_id === clientId);
+        if (isJoin && currentPlayer && nickname && !cardCode) { try { await ensureCard(); } catch (error) { participantConnection.textContent = error.message; } }
+        renderParticipant(playersResult.data || [], notesResult.data || [], claimsResult.data || []);
       }
 
       try {
@@ -627,12 +745,18 @@
           .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms', filter: `id=eq.${roomId}` }, refresh)
           .on('postgres_changes', { event: '*', schema: 'public', table: 'players', filter: `room_id=eq.${roomId}` }, refresh)
           .on('postgres_changes', { event: '*', schema: 'public', table: 'notes', filter: `room_id=eq.${roomId}` }, refresh)
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'task_claims', filter: `room_id=eq.${roomId}` }, refresh)
           .subscribe();
         document.getElementById('nicknameForm').addEventListener('submit', event => { event.preventDefault(); nickname = document.getElementById('nickname').value.trim(); if (!nickname) return; localStorage.setItem(`team-ready-name-${roomId}`, nickname); refresh(); });
         document.getElementById('editNickname').addEventListener('click', () => { document.getElementById('nameSetup').classList.remove('hidden'); document.getElementById('participantReady').classList.add('hidden'); });
-        document.getElementById('participantDraw').addEventListener('click', async () => { if (!nickname) return; const result = await supabase.rpc('assign_team', { p_room_id: roomId, p_client_id: clientId, p_nickname: nickname }); if (result.error) participantConnection.textContent = result.error.message; await refresh(); });
+        document.getElementById('participantDraw').addEventListener('click', async () => { if (!nickname) return; const result = await supabase.rpc('assign_team', { p_room_id: roomId, p_client_id: clientId, p_nickname: nickname }); if (result.error) { participantConnection.textContent = result.error.message; return; } try { await ensureCard(); } catch (error) { participantConnection.textContent = error.message; } await refresh(); });
         document.getElementById('mobileNoteForm').addEventListener('submit', async event => { event.preventDefault(); const body = document.getElementById('mobileNote').value.trim(); if (!body) return; await supabase.from('notes').insert({ room_id: roomId, client_id: clientId, question: currentRoom.active_question ?? 0, body }); document.getElementById('mobileNote').value = ''; await refresh(); });
         document.getElementById('questionMenu').addEventListener('click', async event => { const button = event.target.closest('[data-question]'); if (!button || isJoin) return; await supabase.from('rooms').update({ active_question: Number(button.dataset.question) }).eq('id', roomId); await refresh(); });
+        document.getElementById('startMission').addEventListener('click', async () => { const started = new Date(); const deadline = new Date(started.getTime() + 15 * 60 * 1000); const result = await supabase.from('rooms').update({ mission_active: true, mission_started_at: started.toISOString(), mission_deadline: deadline.toISOString() }).eq('id', roomId); if (result.error) { document.getElementById('missionStatus').textContent = `开始失败：${result.error.message}`; return; } await refresh(); });
+        document.getElementById('stopMission').addEventListener('click', async () => { const result = await supabase.from('rooms').update({ mission_active: false }).eq('id', roomId); if (result.error) { document.getElementById('missionStatus').textContent = `截止失败：${result.error.message}`; return; } await refresh(); });
+        document.getElementById('copyIdentityLink').addEventListener('click', async event => { const url = document.getElementById('identityLink').dataset.url; if (!url) return; try { await navigator.clipboard.writeText(url); event.currentTarget.textContent = '已复制'; setTimeout(() => { event.currentTarget.textContent = '复制链接'; }, 1400); } catch { event.currentTarget.textContent = '请长按复制'; } });
+        document.getElementById('mobileTaskList').addEventListener('click', async event => { const button = event.target.closest('[data-start-task]'); if (!button || button.disabled) return; try { await ensureCard(); const taskIndex = Number(button.dataset.startTask); const result = await supabase.rpc('create_task_request', { p_room_id: roomId, p_client_id: clientId, p_token: cardToken, p_task_index: taskIndex }); if (result.error) throw result.error; pendingRequest = result.data; document.getElementById('verificationCode').textContent = pendingRequest.request_code; document.getElementById('verificationTaskLabel').textContent = `任务 ${taskIndex + 1}：${missionTasks[taskIndex]} · 有效期 3 分钟 · 只能使用一次`; document.getElementById('verificationTicket').classList.remove('hidden'); document.getElementById('mobileMissionStatus').textContent = '请把验证码展示给完成任务的伙伴，由对方确认'; } catch (error) { document.getElementById('mobileMissionStatus').textContent = error.message || '暂时无法生成核验码'; } });
+        document.getElementById('verifyTaskForm').addEventListener('submit', async event => { event.preventDefault(); const code = document.getElementById('verifyCode').value.trim(); if (!/^\d{6}$/.test(code)) return; try { await ensureCard(); const result = await supabase.rpc('confirm_task_request', { p_room_id: roomId, p_verifier_client_id: clientId, p_token: cardToken, p_request_code: code }); if (result.error) throw result.error; document.getElementById('verifyCode').value = ''; document.getElementById('verificationTicket').classList.add('hidden'); document.getElementById('mobileMissionStatus').textContent = `已确认任务 ${Number(result.data.task_index) + 1}，成绩已实时提交`; await refresh(); } catch (error) { document.getElementById('mobileMissionStatus').textContent = error.message || '核验失败，请检查验证码'; } });
       } catch (error) {
         hostStatus.textContent = '实时服务连接失败，请检查 Supabase 配置'; participantStatus.textContent = '连接失败'; participantConnection.textContent = '请检查 Supabase 设置后重试';
       }
