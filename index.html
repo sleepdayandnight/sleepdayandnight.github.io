@@ -710,11 +710,12 @@
         const mine = claims.filter(claim => claim.initiator_client_id === clientId);
         const taskList = document.getElementById('mobileTaskList');
         if (!taskList) return;
-        if (!hasIdentity) { taskList.innerHTML = '<div class="mobile-mission-status">请先抽取颜色，系统会生成你的身份卡</div>'; return; }
         taskList.innerHTML = missionTasks.map((task, index) => {
           const done = mine.some(claim => Number(claim.task_index) === index);
-          const verifierInput = done ? '<small>该任务已锁定，不再重复计分</small>' : `<div class="task-verify-inline"><input data-verify-input="${index}" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="伙伴验证码"><button class="button small" data-confirm-task="${index}" type="button">确认</button></div>`;
-          return `<article class="mobile-task ${done ? 'done' : ''}"><div>${index + 1}. ${safe(task)}<small>${done ? '已完成双端核验' : '先让伙伴确认，再在此输入验证码'}</small>${verifierInput}</div><button class="button small ${done ? '' : 'yellow'}" data-start-task="${index}" type="button" ${done || !missionIsOpen() ? 'disabled' : ''}>${done ? '已完成' : '发起核验'}</button></article>`;
+          const locked = !hasIdentity;
+          const verifierInput = done ? '<small>该任务已锁定，不再重复计分</small>' : `<div class="task-verify-inline"><input data-verify-input="${index}" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="伙伴验证码" ${locked ? 'disabled' : ''}><button class="button small" data-confirm-task="${index}" type="button" ${locked ? 'disabled' : ''}>确认</button></div>`;
+          const status = done ? '已完成双端核验' : (locked ? '抽取颜色后可发起或确认核验' : '先让伙伴确认，再在此输入验证码');
+          return `<article class="mobile-task ${done ? 'done' : ''}"><div>${index + 1}. ${safe(task)}<small>${status}</small>${verifierInput}</div><button class="button small ${done ? '' : 'yellow'}" data-start-task="${index}" type="button" ${done || locked || !missionIsOpen() ? 'disabled' : ''}>${done ? '已完成' : '发起核验'}</button></article>`;
         }).join('');
       }
 
